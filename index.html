@@ -2,470 +2,456 @@
 <html lang="ca">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="mobile-web-app-capable" content="yes">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black">
-<title>Cadena de bicicleta — serp mecànica</title>
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0f172a">
+<title>Traductor de veu · Català</title>
 <style>
   :root{
-    --bg-0:#0b0c0e;
-    --bg-1:#16181b;
-    --steel-hi:#eef1f3;
-    --steel-mid:#9aa1a8;
-    --steel-lo:#3c4045;
-    --steel-shadow:#0e1012;
-    --brass:#caa25a;
+    --bg:#0b1220; --bg2:#111b30; --card:#16213a; --card2:#1c2a4a;
+    --line:#2a3a60; --txt:#eef2ff; --mut:#93a0c0;
+    --ca:#f5b301; --ca2:#d99a00; --dst:#38bdf8; --dst2:#0ea5e9;
+    --ok:#34d399; --err:#f87171; --r:20px;
   }
-  html,body{
-    margin:0; padding:0; width:100%; height:100%;
-    background:var(--bg-0);
-    overflow:hidden;
-    touch-action:none;
-    -webkit-user-select:none; user-select:none;
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;height:100%}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:radial-gradient(1200px 600px at 10% -10%,#1b2a52 0%,transparent 60%),
+               radial-gradient(900px 500px at 110% 10%,#10304a 0%,transparent 55%),var(--bg);
+    color:var(--txt);
+    padding:max(14px,env(safe-area-inset-top)) max(14px,env(safe-area-inset-right)) max(20px,env(safe-area-inset-bottom)) max(14px,env(safe-area-inset-left));
+    min-height:100%;
   }
-  #stage{
-    position:fixed; inset:0;
-    width:100vw; height:100dvh;
-    background:
-      radial-gradient(120% 90% at 50% 8%, var(--bg-1) 0%, var(--bg-0) 62%),
-      repeating-linear-gradient(90deg, rgba(255,255,255,0.012) 0px, rgba(255,255,255,0.012) 1px, transparent 1px, transparent 3px);
+  .wrap{max-width:1100px;margin:0 auto}
+  header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+  h1{font-size:clamp(20px,4vw,28px);margin:0;letter-spacing:.2px;display:flex;align-items:center;gap:10px}
+  h1 small{font-weight:500;color:var(--mut);font-size:.55em}
+  .opts{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .switch{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--line);
+    padding:8px 12px;border-radius:999px;font-size:14px;cursor:pointer;user-select:none}
+  .switch input{display:none}
+  .switch .dot{width:34px;height:20px;border-radius:999px;background:#33425f;position:relative;transition:.2s}
+  .switch .dot::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;transition:.2s}
+  .switch input:checked + .dot{background:var(--ok)}
+  .switch input:checked + .dot::after{left:16px}
+
+  /* selector d'idiomes */
+  .langs{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px;margin-bottom:16px}
+  .lang{
+    display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:14px;
+    background:var(--card);border:2px solid transparent;color:var(--txt);font-size:15px;cursor:pointer;
+    text-align:left;transition:.15s;font-family:inherit
   }
-  canvas{
-    display:block;
-    width:100%; height:100%;
+  .lang:hover{background:var(--card2)}
+  .lang.active{border-color:var(--dst);background:var(--card2);box-shadow:0 0 0 4px rgba(56,189,248,.14)}
+  .flag{width:40px;height:27px;border-radius:4px;object-fit:cover;box-shadow:0 0 0 1px rgba(255,255,255,.18);flex:none;background:#223}
+  .lang span{line-height:1.1}
+  .lang small{display:block;color:var(--mut);font-size:11px;margin-top:2px}
+
+  /* targetes */
+  .panels{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .panel{background:linear-gradient(180deg,var(--card),var(--bg2));border:1px solid var(--line);
+    border-radius:var(--r);padding:14px;display:flex;flex-direction:column;gap:10px;min-height:280px}
+  .panel.ca{--c:var(--ca);--c2:var(--ca2)}
+  .panel.dst{--c:var(--dst);--c2:var(--dst2)}
+  .ph{display:flex;align-items:center;gap:10px}
+  .ph .flag{width:38px;height:26px}
+  .ph b{font-size:18px}
+  .ph em{font-style:normal;color:var(--mut);font-size:13px;margin-left:auto}
+  textarea{
+    flex:1;width:100%;min-height:130px;resize:none;border:1px solid var(--line);border-radius:14px;
+    background:#0c1529;color:var(--txt);padding:12px 14px;font-size:20px;line-height:1.4;font-family:inherit;outline:none
   }
-  #hud{
-    position:fixed; left:0; right:0; bottom:max(10px, env(safe-area-inset-bottom));
-    display:flex; justify-content:center;
-    pointer-events:none;
-    font-family:-apple-system, "Oswald", "Segoe UI", sans-serif;
-    letter-spacing:.14em;
-    text-transform:uppercase;
-    font-size:11px;
-    color:rgba(202,162,90,0.55);
-    text-shadow:0 1px 2px rgba(0,0,0,.6);
+  textarea:focus{border-color:var(--c)}
+  textarea.interim{color:var(--mut);font-style:italic}
+  textarea.busy{opacity:.55}
+  .bar{display:flex;gap:10px;align-items:center}
+  .btn{
+    border:0;border-radius:50%;width:64px;height:64px;display:grid;place-items:center;cursor:pointer;
+    color:#08111f;background:var(--c);transition:transform .12s,box-shadow .2s;flex:none
+  }
+  .btn:active{transform:scale(.93)}
+  .btn svg{width:28px;height:28px;fill:currentColor}
+  .btn.mic.rec{background:var(--err);color:#fff;animation:pulse 1.2s infinite}
+  .btn.spk{background:transparent;color:var(--c);border:2px solid var(--c);width:54px;height:54px}
+  .btn.spk.talk{background:var(--c);color:#08111f;animation:pulse2 1.2s infinite}
+  .btn.small{width:44px;height:44px;background:var(--card2);color:var(--txt);border:1px solid var(--line)}
+  .btn.small svg{width:20px;height:20px}
+  .spacer{flex:1}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(248,113,113,.6)}100%{box-shadow:0 0 0 22px rgba(248,113,113,0)}}
+  @keyframes pulse2{0%{box-shadow:0 0 0 0 rgba(255,255,255,.35)}100%{box-shadow:0 0 0 18px rgba(255,255,255,0)}}
+
+  #status{margin:14px 2px 0;min-height:22px;font-size:14px;color:var(--mut);text-align:center}
+  #status.err{color:var(--err)}
+  #status.ok{color:var(--ok)}
+
+  /* historial */
+  .hist{margin-top:18px}
+  .hist h2{font-size:15px;color:var(--mut);margin:0 0 8px;display:flex;align-items:center;justify-content:space-between}
+  .hist h2 button{background:none;border:0;color:var(--mut);cursor:pointer;font-size:13px;text-decoration:underline;font-family:inherit}
+  .item{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--c,var(--ca));
+    border-radius:14px;padding:10px 14px;margin-bottom:8px;display:grid;gap:4px}
+  .item.dst{--c:var(--dst)}
+  .item .a{font-size:15px}
+  .item .b{font-size:17px;font-weight:600}
+  .item .m{font-size:12px;color:var(--mut)}
+  .item{cursor:pointer}
+
+  @media (max-width:760px){
+    .panels{grid-template-columns:1fr}
+    .panel{min-height:0}
+    textarea{min-height:96px;font-size:19px}
+    .langs{grid-template-columns:repeat(3,1fr)}
+    .lang{flex-direction:column;align-items:center;text-align:center;gap:6px;padding:10px 4px;font-size:13px}
+    .lang small{display:none}
   }
 </style>
 </head>
 <body>
-<div id="stage">
-  <canvas id="c"></canvas>
+<div class="wrap">
+  <header>
+    <h1>🗣️ Traductor de veu <small>Català ⇄ món</small></h1>
+    <div class="opts">
+      <label class="switch" title="Llegeix en veu alta cada traducció">
+        <input type="checkbox" id="auto" checked><span class="dot"></span><span>Llegir automàticament</span>
+      </label>
+    </div>
+  </header>
+
+  <div class="langs" id="langs" role="tablist" aria-label="Idioma de destinació"></div>
+
+  <div class="panels">
+    <!-- CATALÀ -->
+    <section class="panel ca" id="pCa">
+      <div class="ph"><img class="flag" id="caFlag" src="" alt="Senyera"><b>Català</b><em>Parla en català</em></div>
+      <textarea id="boxCa" placeholder="Prem el micròfon i parla… o escriu aquí" spellcheck="false"></textarea>
+      <div class="bar">
+        <button class="btn mic" id="micCa" aria-label="Dictar en català"><svg viewBox="0 0 24 24"><path d="M12 15a4 4 0 0 0 4-4V6a4 4 0 0 0-8 0v5a4 4 0 0 0 4 4zm6-4a1 1 0 1 1 2 0 8 8 0 0 1-7 7.94V21h3a1 1 0 1 1 0 2H8a1 1 0 1 1 0-2h3v-2.06A8 8 0 0 1 4 11a1 1 0 1 1 2 0 6 6 0 0 0 12 0z"/></svg></button>
+        <button class="btn spk" id="spkCa" aria-label="Escoltar en català"><svg viewBox="0 0 24 24"><path d="M3 10v4a1 1 0 0 0 1 1h3l4.3 3.6A1 1 0 0 0 13 18V6a1 1 0 0 0-1.7-.6L7 9H4a1 1 0 0 0-1 1zm13.5 2a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4zM14 3.2v2.1a7 7 0 0 1 0 13.4v2.1a9 9 0 0 0 0-17.6z"/></svg></button>
+        <span class="spacer"></span>
+        <button class="btn small" data-copy="boxCa" aria-label="Copiar"><svg viewBox="0 0 24 24"><path d="M16 1H6a2 2 0 0 0-2 2v12h2V3h10V1zm3 4H10a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2zm0 16H10V7h9v14z"/></svg></button>
+        <button class="btn small" data-clear aria-label="Esborrar"><svg viewBox="0 0 24 24"><path d="M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg></button>
+      </div>
+    </section>
+
+    <!-- IDIOMA DESTÍ -->
+    <section class="panel dst" id="pDst">
+      <div class="ph"><img class="flag" id="dstFlag" src="" alt=""><b id="dstName">Castellà</b><em id="dstHint">Habla en castellà</em></div>
+      <textarea id="boxDst" placeholder="La traducció apareixerà aquí… o escriu en aquest idioma" spellcheck="false"></textarea>
+      <div class="bar">
+        <button class="btn mic" id="micDst" aria-label="Dictar en l'idioma de destinació"><svg viewBox="0 0 24 24"><path d="M12 15a4 4 0 0 0 4-4V6a4 4 0 0 0-8 0v5a4 4 0 0 0 4 4zm6-4a1 1 0 1 1 2 0 8 8 0 0 1-7 7.94V21h3a1 1 0 1 1 0 2H8a1 1 0 1 1 0-2h3v-2.06A8 8 0 0 1 4 11a1 1 0 1 1 2 0 6 6 0 0 0 12 0z"/></svg></button>
+        <button class="btn spk" id="spkDst" aria-label="Escoltar la traducció"><svg viewBox="0 0 24 24"><path d="M3 10v4a1 1 0 0 0 1 1h3l4.3 3.6A1 1 0 0 0 13 18V6a1 1 0 0 0-1.7-.6L7 9H4a1 1 0 0 0-1 1zm13.5 2a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4zM14 3.2v2.1a7 7 0 0 1 0 13.4v2.1a9 9 0 0 0 0-17.6z"/></svg></button>
+        <span class="spacer"></span>
+        <button class="btn small" data-copy="boxDst" aria-label="Copiar"><svg viewBox="0 0 24 24"><path d="M16 1H6a2 2 0 0 0-2 2v12h2V3h10V1zm3 4H10a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2zm0 16H10V7h9v14z"/></svg></button>
+        <button class="btn small" data-clear aria-label="Esborrar"><svg viewBox="0 0 24 24"><path d="M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg></button>
+      </div>
+    </section>
+  </div>
+
+  <div id="status"></div>
+
+  <section class="hist">
+    <h2><span>Historial de la conversa</span><button id="clearHist">Esborrar historial</button></h2>
+    <div id="hist"></div>
+  </section>
 </div>
-<div id="hud">36 baules · transmissió lliure</div>
 
 <script>
-(function(){
-  "use strict";
+(() => {
+  'use strict';
 
-  var canvas = document.getElementById('c');
-  var ctx = canvas.getContext('2d');
-  var DPR = Math.min(window.devicePixelRatio || 1, 2.5);
+  const CA = {id:'ca', name:'Català', native:'Català', sr:'ca-ES', tl:'ca', mm:'ca', flag:'es-ct'};
+  const LANGS = [
+    {id:'fr', name:'Francès',    native:'Français',    sr:'fr-FR', tl:'fr',    mm:'fr',    flag:'fr', hint:'Parlez en français'},
+    {id:'pt', name:'Portuguès',  native:'Português',   sr:'pt-PT', tl:'pt',    mm:'pt-PT', flag:'pt', hint:'Fale em português'},
+    {id:'br', name:'Brasiler',   native:'Português BR',sr:'pt-BR', tl:'pt',    mm:'pt-BR', flag:'br', hint:'Fale em português do Brasil'},
+    {id:'it', name:'Italià',     native:'Italiano',    sr:'it-IT', tl:'it',    mm:'it',    flag:'it', hint:'Parla in italiano'},
+    {id:'de', name:'Alemany',    native:'Deutsch',     sr:'de-DE', tl:'de',    mm:'de',    flag:'de', hint:'Sprechen Sie Deutsch'},
+    {id:'nl', name:'Neerlandès', native:'Nederlands',  sr:'nl-NL', tl:'nl',    mm:'nl',    flag:'nl', hint:'Spreek Nederlands'},
+    {id:'zh', name:'Xinès',      native:'简体中文',      sr:'zh-CN', tl:'zh-CN', mm:'zh-CN', flag:'cn', hint:'请说中文'},
+    {id:'ru', name:'Rus',        native:'Русский',     sr:'ru-RU', tl:'ru',    mm:'ru',    flag:'ru', hint:'Говорите по-русски'},
+    {id:'en', name:'Anglès',     native:'English',     sr:'en-GB', tl:'en',    mm:'en',    flag:'gb', hint:'Speak English'},
+    {id:'es', name:'Castellà',   native:'Español',     sr:'es-ES', tl:'es',    mm:'es',    flag:'es', hint:'Habla en castellano'}
+  ];
 
-  var W = 0, H = 0; // mida CSS (px lògics)
-
-  function resize(){
-    W = window.innerWidth;
-    H = window.innerHeight;
-    canvas.width  = Math.round(W * DPR);
-    canvas.height = Math.round(H * DPR);
-    canvas.style.width  = W + 'px';
-    canvas.style.height = H + 'px';
-    ctx.setTransform(DPR,0,0,DPR,0,0);
-  }
-  window.addEventListener('resize', resize);
-  window.addEventListener('orientationchange', function(){ setTimeout(resize, 60); });
-  resize();
-
-  // ---------------------------------------------------------------
-  // Paràmetres de la cadena
-  // ---------------------------------------------------------------
-  var LINKS = 36;
-
-  // Mida de la baula proporcional a la pantalla (tauleta Redmi Pad SE ~ 1920x1200)
-  function linkSize(){
-    var base = Math.min(W, H);
-    var len = Math.max(16, Math.min(30, base * 0.024));
-    return {
-      len: len,                 // distància entre eixos de baula
-      rollerR: len * 0.34,      // radi del corró (roller)
-      plateOuterH: len * 0.66,  // alçada plaques exteriors
-      plateInnerH: len * 0.40   // alçada plaques interiors
-    };
-  }
-  var LS = linkSize();
-  window.addEventListener('resize', function(){ LS = linkSize(); });
-
-  // Velocitat lineal del cap de la cadena (px/s), constant → l'energia es conserva als rebots
-  var SPEED = Math.min(W, H) * 0.34;
-
-  var margin = function(){ return LS.rollerR + 2; };
-
-  // Radi de col·lisió de cada baula (per a l'autocol·lisió del cos)
-  var COLL_R = LS.plateOuterH * 0.5;
-  window.addEventListener('resize', function(){ COLL_R = LS.plateOuterH * 0.5; });
-
-  function clampNum(v, lo, hi){ return v < lo ? lo : (v > hi ? hi : v); }
-  function clampPoint(p){
-    var m = margin();
-    if (p.x < m) p.x = m; else if (p.x > W - m) p.x = W - m;
-    if (p.y < m) p.y = m; else if (p.y > H - m) p.y = H - m;
-  }
-
-  // Punt i direcció d'inici aleatoris a cada càrrega
-  var initX = margin() + Math.random() * (W - 2 * margin());
-  var initY = margin() + Math.random() * (H - 2 * margin());
-  var initAngle = Math.random() * Math.PI * 2;
-
-  // Estat del cap: posició + vector velocitat (defineix l'angle d'incidència).
-  // El cap és l'única baula "cinemàtica": mana la direcció, la resta del
-  // cos la segueix per física real (Verlet), no per un rastre gravat.
-  var head = {
-    x: initX,
-    y: initY,
-    vx: SPEED * Math.cos(initAngle),
-    vy: SPEED * Math.sin(initAngle)
-  };
-  var moveAngle = initAngle;
-  var angVel = 0;
-
-  // Partícules del cos (índex 0 = cap). pos/prevPos → integració de Verlet,
-  // que dona inèrcia real: cada baula "sent" el pes i l'impuls de les veïnes
-  // en lloc de teletransportar-se seguint un camí precalculat.
-  var pos = [], prevPos = [];
-  (function seedBody(){
-    for (var i = 0; i < LINKS; i++){
-      var d = i * LS.len;
-      var p = {
-        x: initX - Math.cos(initAngle) * d,
-        y: initY - Math.sin(initAngle) * d
-      };
-      clampPoint(p);
-      pos.push({x: p.x, y: p.y});
-      prevPos.push({x: p.x, y: p.y});
+  const $ = id => document.getElementById(id);
+  const boxCa = $('boxCa'), boxDst = $('boxDst');
+  const micCa = $('micCa'), micDst = $('micDst');
+  const spkCa = $('spkCa'), spkDst = $('spkDst');
+  const statusEl = $('status');
+  // Banderes incrustades (SVG): funcionen sense connexió i en tots els dispositius
+  const star = (cx, cy, R, r, rot = -90) => {
+    let p = [];
+    for (let i = 0; i < 10; i++) {
+      const a = (rot + i * 36) * Math.PI / 180, d = i % 2 ? r : R;
+      p.push((cx + d * Math.cos(a)).toFixed(2) + ',' + (cy + d * Math.sin(a)).toFixed(2));
     }
-    pos[0].x = head.x; pos[0].y = head.y;
-    prevPos[0].x = head.x; prevPos[0].y = head.y;
-  })();
+    return p.join(' ');
+  };
+  const H3 = (a, b, c) => `<rect width="30" height="7" fill="${a}"/><rect y="6.67" width="30" height="6.67" fill="${b}"/><rect y="13.33" width="30" height="6.67" fill="${c}"/>`;
+  const V3 = (a, b, c) => `<rect width="10" height="20" fill="${a}"/><rect x="10" width="10" height="20" fill="${b}"/><rect x="20" width="10" height="20" fill="${c}"/>`;
+  const FLAGS = {
+    'es-ct': '<rect width="30" height="20" fill="#FCDD09"/>' + [1,3,5,7].map(i => `<rect y="${(i*20/9).toFixed(2)}" width="30" height="${(20/9).toFixed(2)}" fill="#DA121A"/>`).join(''),
+    'es':    '<rect width="30" height="20" fill="#AA151B"/><rect y="5" width="30" height="10" fill="#F1BF00"/>',
+    'fr':    V3('#0055A4', '#FFFFFF', '#EF4135'),
+    'pt':    '<rect width="30" height="20" fill="#FF0000"/><rect width="12" height="20" fill="#006600"/><circle cx="12" cy="10" r="3.6" fill="#FFE000"/><circle cx="12" cy="10" r="2" fill="#FF0000"/><circle cx="12" cy="10" r="1" fill="#fff"/>',
+    'br':    '<rect width="30" height="20" fill="#009C3B"/><polygon points="15,2 27.5,10 15,18 2.5,10" fill="#FFDF00"/><circle cx="15" cy="10" r="4.6" fill="#002776"/><path d="M10.6 9.2Q15 7.6 19.4 11" stroke="#fff" stroke-width="1.1" fill="none"/>',
+    'it':    V3('#009246', '#FFFFFF', '#CE2B37'),
+    'de':    H3('#000000', '#DD0000', '#FFCE00'),
+    'nl':    H3('#AE1C28', '#FFFFFF', '#21468B'),
+    'cn':    `<rect width="30" height="20" fill="#DE2910"/><polygon points="${star(5,5,3,1.2)}" fill="#FFDE00"/><polygon points="${star(10,2,1,.4,-70)}" fill="#FFDE00"/><polygon points="${star(12,4,1,.4,-90)}" fill="#FFDE00"/><polygon points="${star(12,7,1,.4,-90)}" fill="#FFDE00"/><polygon points="${star(10,9,1,.4,-70)}" fill="#FFDE00"/>`,
+    'ru':    H3('#FFFFFF', '#0039A6', '#D52B1E'),
+    'gb':    '<rect width="30" height="20" fill="#012169"/><path d="M0 0L30 20M30 0L0 20" stroke="#fff" stroke-width="4"/><path d="M0 0L30 20M30 0L0 20" stroke="#C8102E" stroke-width="1.5"/><path d="M15 0V20M0 10H30" stroke="#fff" stroke-width="6"/><path d="M15 0V20M0 10H30" stroke="#C8102E" stroke-width="3.4"/>'
+  };
+  const flagUrl = (c) => 'data:image/svg+xml;utf8,' + encodeURIComponent(
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 20" preserveAspectRatio="none">${FLAGS[c] || ''}</svg>`);
+  $('caFlag').src = flagUrl('es-ct');
 
-  window.addEventListener('resize', function(){
-    for (var i = 0; i < LINKS; i++){ clampPoint(pos[i]); clampPoint(prevPos[i]); }
+  let target = LANGS[0];
+  try { const s = localStorage.getItem('tv_target'); if (s) target = LANGS.find(l => l.id === s) || target; } catch(e){}
+  let seq = 0;               // evita respostes antigues de traducció
+  let rec = null, recSide = null;
+  let history = [];
+
+  /* ---------- UI idiomes ---------- */
+  const langsEl = $('langs');
+  LANGS.forEach(l => {
+    const b = document.createElement('button');
+    b.className = 'lang'; b.dataset.id = l.id; b.setAttribute('role','tab');
+    b.innerHTML = `<img class="flag" src="${flagUrl(l.flag,80)}" alt="" loading="lazy"><span>${l.name}<small>${l.native}</small></span>`;
+    b.addEventListener('click', () => setTarget(l.id));
+    langsEl.appendChild(b);
   });
 
-  // Restricció de distància rígida entre dues baules consecutives: ni
-  // s'estiren ni es comprimeixen, com els perns d'una cadena real.
-  function solveDistance(a, b, restLen, aFixed){
-    var dx = b.x - a.x, dy = b.y - a.y;
-    var dist = Math.hypot(dx, dy) || 0.0001;
-    var diff = (dist - restLen) / dist;
-    if (aFixed){
-      b.x -= dx * diff;
-      b.y -= dy * diff;
-    } else {
-      var ox = dx * diff * 0.5, oy = dy * diff * 0.5;
-      a.x += ox; a.y += oy;
-      b.x -= ox; b.y -= oy;
+  function setTarget(id) {
+    stopAll();
+    target = LANGS.find(l => l.id === id);
+    try { localStorage.setItem('tv_target', id); } catch(e){}
+    document.querySelectorAll('.lang').forEach(b => {
+      const on = b.dataset.id === id; b.classList.toggle('active', on); b.setAttribute('aria-selected', on);
+    });
+    $('dstFlag').src = flagUrl(target.flag, 80);
+    $('dstName').textContent = target.name;
+    $('dstHint').textContent = target.hint;
+    boxDst.lang = target.sr;
+    // Si ja hi ha text en català, retraduïm a l'idioma nou
+    if (boxCa.value.trim()) translateFrom('ca', false);
+    else boxDst.value = '';
+    setStatus('');
+  }
+
+  /* ---------- Estat ---------- */
+  function setStatus(msg, cls = '') { statusEl.textContent = msg; statusEl.className = cls; }
+
+  /* ---------- Traducció ---------- */
+  async function translate(text, from, to) {
+    // 1) Endpoint gtx de Google (ràpid, sense clau)
+    try {
+      const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${from.tl}&tl=${to.tl}&dt=t&q=${encodeURIComponent(text)}`;
+      const r = await fetch(url);
+      if (!r.ok) throw new Error('gtx ' + r.status);
+      const d = await r.json();
+      const out = d[0].map(x => x[0]).join('');
+      if (out) return out;
+      throw new Error('buit');
+    } catch (e1) {
+      // 2) Alternativa: MyMemory
+      const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${from.mm}|${to.mm}`;
+      const r = await fetch(url);
+      if (!r.ok) throw new Error('mymemory ' + r.status);
+      const d = await r.json();
+      if (d && d.responseData && d.responseData.translatedText) return d.responseData.translatedText;
+      throw new Error('Sense resposta');
     }
   }
 
-  // Autocol·lisió: cap parell de baules no consecutives pot ocupar el
-  // mateix espai — quan la cadena es creua amb ella mateixa, es separen
-  // físicament, com faria una cadena sòlida real.
-  function solveSelfCollision(){
-    var minD = COLL_R * 2;
-    var minD2 = minD * minD;
-    for (var i = 0; i < LINKS; i++){
-      var a = pos[i];
-      for (var j = i + 3; j < LINKS; j++){ // saltem veïns immediats (ja rígids)
-        var b = pos[j];
-        var dx = b.x - a.x, dy = b.y - a.y;
-        var d2 = dx*dx + dy*dy;
-        if (d2 < minD2 && d2 > 0.000001){
-          var d = Math.sqrt(d2);
-          var overlap = (minD - d) / d;
-          var ox = dx * overlap * 0.5, oy = dy * overlap * 0.5;
-          if (i === 0){
-            // el cap no cedeix la seva trajectòria: absorbeix l'altra baula
-            b.x += ox * 2; b.y += oy * 2;
-          } else {
-            a.x -= ox; a.y -= oy;
-            b.x += ox; b.y += oy;
-          }
-        }
+  async function translateFrom(side, speak = true) {
+    const fromL = side === 'ca' ? CA : target;
+    const toL   = side === 'ca' ? target : CA;
+    const src = side === 'ca' ? boxCa : boxDst;
+    const dst = side === 'ca' ? boxDst : boxCa;
+    const text = src.value.trim();
+    if (!text) { dst.value = ''; return; }
+    const my = ++seq;
+    dst.classList.add('busy');
+    setStatus('Traduint…');
+    try {
+      const out = await translate(text, fromL, toL);
+      if (my !== seq) return;
+      dst.value = out;
+      setStatus('Fet ✓', 'ok');
+      addHistory(side, text, out, fromL, toL);
+      if (speak && $('auto').checked) speakText(out, toL, side === 'ca' ? spkDst : spkCa);
+    } catch (e) {
+      if (my !== seq) return;
+      setStatus('No s\'ha pogut traduir. Comprova la connexió.', 'err');
+    } finally {
+      if (my === seq) dst.classList.remove('busy');
+    }
+  }
+
+  /* ---------- Reconeixement de veu ---------- */
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+  function stopRec() {
+    if (rec) { try { rec.onend = null; rec.stop(); } catch(e){} rec = null; }
+    micCa.classList.remove('rec'); micDst.classList.remove('rec');
+    recSide = null;
+  }
+
+  function startRec(side) {
+    if (!SR) { setStatus('Aquest navegador no admet dictat per veu. Fes servir Safari (iPhone) o Chrome/Edge (ordinador).', 'err'); return; }
+    unlockTTS();
+    stopSpeak();
+    if (recSide === side) { stopRec(); return; }   // segon toc = aturar
+    stopRec();
+
+    const L = side === 'ca' ? CA : target;
+    const box = side === 'ca' ? boxCa : boxDst;
+    const mic = side === 'ca' ? micCa : micDst;
+    let finalText = '';
+
+    const r = new SR();
+    r.lang = L.sr;
+    r.interimResults = true;
+    r.continuous = false;
+    r.maxAlternatives = 1;
+
+    r.onstart = () => { mic.classList.add('rec'); setStatus('Escoltant en ' + L.name.toLowerCase() + '…'); };
+    r.onresult = ev => {
+      let interim = '';
+      for (let i = ev.resultIndex; i < ev.results.length; i++) {
+        const t = ev.results[i][0].transcript;
+        if (ev.results[i].isFinal) finalText += t; else interim += t;
       }
-    }
+      box.value = (finalText + interim).trim();
+      box.classList.toggle('interim', !!interim && !finalText);
+    };
+    r.onerror = ev => {
+      const m = {
+        'not-allowed': 'Permís de micròfon denegat. Activa\'l a la configuració del navegador.',
+        'service-not-allowed': 'El servei de veu no està permès en aquest navegador.',
+        'no-speech': 'No he sentit res. Torna-ho a provar.',
+        'audio-capture': 'No es detecta cap micròfon.',
+        'network': 'Error de xarxa en el reconeixement de veu.',
+        'language-not-supported': 'Idioma no admès per al dictat en aquest dispositiu.'
+      };
+      setStatus(m[ev.error] || ('Error de veu: ' + ev.error), 'err');
+    };
+    r.onend = () => {
+      mic.classList.remove('rec'); box.classList.remove('interim');
+      rec = null; recSide = null;
+      if (finalText.trim()) { box.value = finalText.trim(); translateFrom(side, true); }
+      else if (!statusEl.classList.contains('err')) setStatus('');
+    };
+
+    rec = r; recSide = side;
+    try { r.start(); } catch (e) { setStatus('No s\'ha pogut iniciar el micròfon.', 'err'); stopRec(); }
   }
 
-  // ---------------------------------------------------------------
-  // Física: moviment del cap + rebot segons l'angle d'impacte
-  // ---------------------------------------------------------------
-  var lastT = null;
-  var simTime = 0;
+  micCa.addEventListener('click', () => startRec('ca'));
+  micDst.addEventListener('click', () => startRec('dst'));
 
-  // Steering orgànic: un procés d'impulsos aleatoris esmorteïts (tipus
-  // Ornstein-Uhlenbeck) que fa cimbrejar la trajectòria del cap en lloc
-  // de mantenir-la rectilínia i previsible entre rebot i rebot.
-  var ANG_IMPULSE = 3.4;   // força dels micro-impulsos aleatoris (rad/s²)
-  var ANG_DAMPING = 1.6;   // esmorteïment cap a la trajectòria recta
-  var MAX_ANGVEL  = 2.6;   // límit de gir (rad/s)
+  /* ---------- Síntesi de veu ---------- */
+  const synth = window.speechSynthesis;
+  let voices = [];
+  function loadVoices() { if (synth) voices = synth.getVoices(); }
+  if (synth) { loadVoices(); synth.onvoiceschanged = loadVoices; }
 
-  function step(dt){
-    simTime += dt;
-
-    // -- 1) steering: la direcció "respira" de manera contínua i orgànica
-    angVel += (Math.random() * 2 - 1) * ANG_IMPULSE * dt;
-    angVel -= angVel * ANG_DAMPING * dt;
-    angVel = clampNum(angVel, -MAX_ANGVEL, MAX_ANGVEL);
-    moveAngle += angVel * dt;
-
-    // -- 2) petit pols de velocitat, com si la cadena passés per les
-    //       dents d'un pinyó (engrenatge), en lloc d'anar a ritme fix
-    var speedNow = SPEED * (1 + 0.07 * Math.sin(simTime * 3.1));
-
-    head.vx = speedNow * Math.cos(moveAngle);
-    head.vy = speedNow * Math.sin(moveAngle);
-
-    var m = margin();
-    var nx = head.x + head.vx * dt;
-    var ny = head.y + head.vy * dt;
-
-    // Rebot especular a cada paret: es capgira només la component
-    // perpendicular a la vora, de manera que l'angle de sortida
-    // sempre és igual a l'angle d'incidència (com una bola de billar).
-    var bounced = false;
-    if (nx < m){ nx = m; head.vx = Math.abs(head.vx); bounced = true; }
-    else if (nx > W - m){ nx = W - m; head.vx = -Math.abs(head.vx); bounced = true; }
-
-    if (ny < m){ ny = m; head.vy = Math.abs(head.vy); bounced = true; }
-    else if (ny > H - m){ ny = H - m; head.vy = -Math.abs(head.vy); bounced = true; }
-
-    if (bounced){
-      // el steering continua a partir de la nova direcció reflectida
-      moveAngle = Math.atan2(head.vy, head.vx);
-      angVel *= 0.4; // el rebot "absorbeix" part del gir acumulat
-    }
-
-    head.x = nx; head.y = ny;
-    pos[0].x = head.x; pos[0].y = head.y; // el cap és l'àncora cinemàtica
-
-    // -- 3) Verlet per a la resta del cos: cada baula manté la seva
-    //       pròpia inèrcia (posició actual - posició anterior)
-    var damping = 0.985;
-    for (var i = 1; i < LINKS; i++){
-      var p = pos[i], pp = prevPos[i];
-      var vx = (p.x - pp.x) * damping;
-      var vy = (p.y - pp.y) * damping;
-      pp.x = p.x; pp.y = p.y;
-      p.x += vx; p.y += vy;
-    }
-
-    // -- 4) Relaxació iterativa: rigidesa de les baules + autocol·lisió
-    //       + contenció dins la pantalla, tot resolt a la vegada com un
-    //       sistema físic sòlid (no un simple recorregut precalculat)
-    var ITER = 6;
-    for (var it = 0; it < ITER; it++){
-      for (i = 0; i < LINKS - 1; i++){
-        solveDistance(pos[i], pos[i+1], LS.len, i === 0);
-      }
-      solveSelfCollision();
-      for (i = 1; i < LINKS; i++) clampPoint(pos[i]);
-    }
+  function pickVoice(code) {
+    const c = code.toLowerCase().replace('_', '-');
+    const base = c.split('-')[0];
+    return voices.find(v => v.lang.toLowerCase().replace('_','-') === c)
+        || voices.find(v => v.lang.toLowerCase().startsWith(base));
   }
 
-  // ---------------------------------------------------------------
-  // Render: cada baula amb relleu metàl·lic (gradients + ombres)
-  // ---------------------------------------------------------------
-  function drawChain(){
-    ctx.clearRect(0, 0, W, H);
-
-    // Les 36 baules ara són el resultat directe de la simulació física
-    // (Verlet + rigidesa + autocol·lisió), no d'un rastre precalculat.
-    var pts = pos;
-    var i;
-
-    // ombra de contacte de tota la cadena (dona sensació de pes sobre el pla)
-    ctx.save();
-    ctx.filter = 'blur(6px)';
-    ctx.globalAlpha = 0.35;
-    ctx.strokeStyle = '#000';
-    ctx.lineWidth = LS.plateOuterH * 0.9;
-    ctx.lineCap = 'round';
-    ctx.lineJoin = 'round';
-    ctx.beginPath();
-    ctx.moveTo(pts[0].x, pts[0].y + 3);
-    for (i = 1; i < pts.length; i++) ctx.lineTo(pts[i].x, pts[i].y + 3);
-    ctx.stroke();
-    ctx.restore();
-
-    // dibuixem cada tram (plaques) entre baula i baula
-    for (i = 0; i < pts.length - 1; i++){
-      drawPlate(pts[i], pts[i+1], i % 2 === 0);
-    }
-
-    // dibuixem els corrons (rollers) sobre les articulacions
-    for (i = 0; i < pts.length; i++){
-      drawRoller(pts[i]);
-    }
-
-    // Ull LED del cap (verd) i de la cua (vermell) — a l'inrevés del
-    // model de referència, on el cap portava el vermell i la cua el verd.
-    drawLED(pts[0], '34,197,94');                 // verd — cap
-    drawLED(pts[pts.length - 1], '239,68,68');     // vermell — cua
+  // iOS: cal "desbloquejar" la veu amb un gest de l'usuari
+  let unlocked = false;
+  function unlockTTS() {
+    if (!synth || unlocked) return;
+    try { const u = new SpeechSynthesisUtterance(' '); u.volume = 0; synth.speak(u); unlocked = true; } catch(e){}
   }
 
-  function drawLED(p, rgb){
-    var r = LS.rollerR * 1.9;
+  let talkingBtn = null;
+  function stopSpeak() {
+    if (synth) synth.cancel();
+    spkCa.classList.remove('talk'); spkDst.classList.remove('talk'); talkingBtn = null;
+  }
+  function stopAll() { stopRec(); stopSpeak(); }
 
-    ctx.save();
-    ctx.translate(p.x, p.y);
-
-    // halo lluminós
-    var glow = ctx.createRadialGradient(0, 0, r*0.1, 0, 0, r);
-    glow.addColorStop(0.00, 'rgba(' + rgb + ',1)');
-    glow.addColorStop(0.45, 'rgba(' + rgb + ',0.55)');
-    glow.addColorStop(1.00, 'rgba(' + rgb + ',0)');
-    ctx.beginPath();
-    ctx.arc(0, 0, r, 0, Math.PI * 2);
-    ctx.fillStyle = glow;
-    ctx.fill();
-
-    // nucli brillant
-    ctx.beginPath();
-    ctx.arc(0, 0, r * 0.22, 0, Math.PI * 2);
-    ctx.fillStyle = '#ffffff';
-    ctx.fill();
-
-    ctx.restore();
+  function speakText(text, L, btn) {
+    if (!synth) { setStatus('Aquest navegador no admet síntesi de veu.', 'err'); return; }
+    text = (text || '').trim(); if (!text) return;
+    synth.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = L.sr; u.rate = 0.95;
+    const v = pickVoice(L.sr); if (v) u.voice = v;
+    spkCa.classList.remove('talk'); spkDst.classList.remove('talk');
+    if (btn) { btn.classList.add('talk'); talkingBtn = btn; }
+    u.onend = u.onerror = () => { if (btn) btn.classList.remove('talk'); };
+    if (!v) setStatus('Pot ser que el teu dispositiu no tingui veu per a ' + L.name.toLowerCase() + '.', '');
+    synth.speak(u);
   }
 
-  function drawPlate(p0, p1, outer){
-    var dx = p1.x - p0.x, dy = p1.y - p0.y;
-    var ang = Math.atan2(dy, dx);
-    var midx = (p0.x + p1.x) / 2, midy = (p0.y + p1.y) / 2;
-    var len = Math.hypot(dx, dy) * 1.06;
-    var h = outer ? LS.plateOuterH : LS.plateInnerH;
+  spkCa.addEventListener('click', () => {
+    unlockTTS();
+    if (talkingBtn === spkCa) return stopSpeak();
+    stopRec(); speakText(boxCa.value, CA, spkCa);
+  });
+  spkDst.addEventListener('click', () => {
+    unlockTTS();
+    if (talkingBtn === spkDst) return stopSpeak();
+    stopRec(); speakText(boxDst.value, target, spkDst);
+  });
 
-    ctx.save();
-    ctx.translate(midx, midy);
-    ctx.rotate(ang);
-
-    var r = h * 0.5;
-    var x0 = -len/2, x1 = len/2;
-
-    // ombra projectada de la placa (relleu)
-    ctx.save();
-    ctx.translate(0, h*0.16);
-    ctx.globalAlpha = 0.30;
-    roundedCapsule(x0, -r, x1, r, r);
-    ctx.fillStyle = '#000';
-    ctx.fill();
-    ctx.restore();
-
-    // cos metàl·lic amb gradient perpendicular (llum superior-esquerra)
-    var grad = ctx.createLinearGradient(0, -r, 0, r);
-    if (outer){
-      grad.addColorStop(0.00, '#f4f6f8');
-      grad.addColorStop(0.20, '#cfd4d8');
-      grad.addColorStop(0.50, '#7d848b');
-      grad.addColorStop(0.80, '#4b4f54');
-      grad.addColorStop(1.00, '#25272a');
-    } else {
-      grad.addColorStop(0.00, '#e3e6e8');
-      grad.addColorStop(0.25, '#b7bcc1');
-      grad.addColorStop(0.55, '#686d73');
-      grad.addColorStop(0.85, '#3a3d41');
-      grad.addColorStop(1.00, '#1c1e20');
-    }
-    roundedCapsule(x0, -r, x1, r, r);
-    ctx.fillStyle = grad;
-    ctx.fill();
-
-    // vora fosca (biselat)
-    ctx.lineWidth = Math.max(0.6, h*0.045);
-    ctx.strokeStyle = 'rgba(0,0,0,0.55)';
-    ctx.stroke();
-
-    // línia de llum superior (aresta brillant, dona el relleu 3D)
-    ctx.beginPath();
-    ctx.moveTo(x0 + r*0.6, -r*0.62);
-    ctx.lineTo(x1 - r*0.6, -r*0.62);
-    ctx.lineWidth = Math.max(0.5, h*0.09);
-    ctx.lineCap = 'round';
-    ctx.strokeStyle = 'rgba(255,255,255,0.55)';
-    ctx.stroke();
-
-    ctx.restore();
+  /* ---------- Escriptura manual (traducció automàtica) ---------- */
+  let timer;
+  function onType(side) {
+    clearTimeout(timer);
+    timer = setTimeout(() => translateFrom(side, false), 800);
   }
+  boxCa.addEventListener('input', () => onType('ca'));
+  boxDst.addEventListener('input', () => onType('dst'));
 
-  function roundedCapsule(x0,y0,x1,y1,r){
-    ctx.beginPath();
-    ctx.moveTo(x0, y0);
-    ctx.lineTo(x1 - r, y0);
-    ctx.arc(x1 - r, (y0+y1)/2, r, -Math.PI/2, Math.PI/2);
-    ctx.lineTo(x0 + r, y1);
-    ctx.arc(x0 + r, (y0+y1)/2, r, Math.PI/2, -Math.PI/2);
-    ctx.closePath();
+  /* ---------- Copiar / esborrar ---------- */
+  document.querySelectorAll('[data-copy]').forEach(b => b.addEventListener('click', async () => {
+    const t = $(b.dataset.copy).value;
+    if (!t) return;
+    try { await navigator.clipboard.writeText(t); setStatus('Copiat ✓', 'ok'); }
+    catch (e) { $(b.dataset.copy).select(); document.execCommand('copy'); setStatus('Copiat ✓', 'ok'); }
+  }));
+  document.querySelectorAll('[data-clear]').forEach(b => b.addEventListener('click', () => {
+    stopAll(); seq++; boxCa.value = ''; boxDst.value = ''; setStatus('');
+  }));
+
+  /* ---------- Historial ---------- */
+  function addHistory(side, a, b, fromL, toL) {
+    history.unshift({side, a, b, fromL, toL});
+    history = history.slice(0, 30);
+    renderHistory();
   }
-
-  function drawRoller(p){
-    var r = LS.rollerR;
-
-    ctx.save();
-    ctx.translate(p.x, p.y);
-
-    // ombra de base
-    ctx.beginPath();
-    ctx.arc(0.6, r*0.28, r, 0, Math.PI*2);
-    ctx.fillStyle = 'rgba(0,0,0,0.4)';
-    ctx.fill();
-
-    // cos cilíndric del corró: gradient radial per simular volum
-    var g = ctx.createRadialGradient(-r*0.35, -r*0.4, r*0.15, 0, 0, r*1.05);
-    g.addColorStop(0.00, '#fbfcfd');
-    g.addColorStop(0.35, '#c7ccd0');
-    g.addColorStop(0.70, '#6b7075');
-    g.addColorStop(1.00, '#2b2d2f');
-    ctx.beginPath();
-    ctx.arc(0, 0, r, 0, Math.PI*2);
-    ctx.fillStyle = g;
-    ctx.fill();
-    ctx.lineWidth = Math.max(0.6, r*0.12);
-    ctx.strokeStyle = 'rgba(0,0,0,0.6)';
-    ctx.stroke();
-
-    // forat central del passador (rebló)
-    ctx.beginPath();
-    ctx.arc(0, 0, r*0.38, 0, Math.PI*2);
-    var g2 = ctx.createRadialGradient(-r*0.12,-r*0.12,r*0.03, 0,0, r*0.4);
-    g2.addColorStop(0, '#3a3c3e');
-    g2.addColorStop(1, '#0a0a0b');
-    ctx.fillStyle = g2;
-    ctx.fill();
-
-    // punt de llum (brillantor metàl·lica)
-    ctx.beginPath();
-    ctx.arc(-r*0.32, -r*0.36, r*0.18, 0, Math.PI*2);
-    ctx.fillStyle = 'rgba(255,255,255,0.75)';
-    ctx.fill();
-
-    ctx.restore();
+  function renderHistory() {
+    const h = $('hist'); h.innerHTML = '';
+    history.forEach(it => {
+      const d = document.createElement('div');
+      d.className = 'item ' + (it.side === 'ca' ? '' : 'dst');
+      const a = document.createElement('div'); a.className = 'a'; a.textContent = it.a;
+      const b = document.createElement('div'); b.className = 'b'; b.textContent = it.b;
+      const m = document.createElement('div'); m.className = 'm'; m.textContent = `${it.fromL.name} → ${it.toL.name} · toca per escoltar`;
+      d.append(a, b, m);
+      d.addEventListener('click', () => { unlockTTS(); speakText(it.b, it.toL, null); });
+      h.appendChild(d);
+    });
   }
+  $('clearHist').addEventListener('click', () => { history = []; renderHistory(); });
 
-  // ---------------------------------------------------------------
-  // Bucle principal
-  // ---------------------------------------------------------------
-  function frame(t){
-    if (lastT === null) lastT = t;
-    var dt = Math.min(0.033, (t - lastT) / 1000);
-    lastT = t;
-
-    step(dt);
-    drawChain();
-
-    requestAnimationFrame(frame);
-  }
-
-  requestAnimationFrame(frame);
+  /* ---------- Inici ---------- */
+  setTarget(target.id);
+  if (!SR) setStatus('Dictat per veu no disponible en aquest navegador (prova Safari o Chrome). Pots escriure igualment.', 'err');
+  document.addEventListener('visibilitychange', () => { if (document.hidden) stopAll(); });
 })();
 </script>
 </body>
