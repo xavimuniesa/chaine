@@ -165,6 +165,7 @@
 
   const CA = {id:'ca', name:'Català', native:'Català', sr:'ca-ES', tl:'ca', mm:'ca', flag:'es-ct'};
   const LANGS = [
+    {id:'en', name:'Anglès',     native:'English',     sr:'en-GB', tl:'en',    mm:'en',    flag:'gb', hint:'Speak English'},
     {id:'fr', name:'Francès',    native:'Français',    sr:'fr-FR', tl:'fr',    mm:'fr',    flag:'fr', hint:'Parlez en français'},
     {id:'pt', name:'Portuguès',  native:'Português',   sr:'pt-PT', tl:'pt',    mm:'pt-PT', flag:'pt', hint:'Fale em português'},
     {id:'br', name:'Brasiler',   native:'Português BR',sr:'pt-BR', tl:'pt',    mm:'pt-BR', flag:'br', hint:'Fale em português do Brasil'},
@@ -173,7 +174,6 @@
     {id:'nl', name:'Neerlandès', native:'Nederlands',  sr:'nl-NL', tl:'nl',    mm:'nl',    flag:'nl', hint:'Spreek Nederlands'},
     {id:'zh', name:'Xinès',      native:'简体中文',      sr:'zh-CN', tl:'zh-CN', mm:'zh-CN', flag:'cn', hint:'请说中文'},
     {id:'ru', name:'Rus',        native:'Русский',     sr:'ru-RU', tl:'ru',    mm:'ru',    flag:'ru', hint:'Говорите по-русски'},
-    {id:'en', name:'Anglès',     native:'English',     sr:'en-GB', tl:'en',    mm:'en',    flag:'gb', hint:'Speak English'},
     {id:'es', name:'Castellà',   native:'Español',     sr:'es-ES', tl:'es',    mm:'es',    flag:'es', hint:'Habla en castellano'}
   ];
 
@@ -247,25 +247,42 @@
   function setStatus(msg, cls = '') { statusEl.textContent = msg; statusEl.className = cls; }
 
   /* ---------- Traducció ---------- */
-  async function translate(text, from, to) {
-    // 1) Endpoint gtx de Google (ràpid, sense clau)
+  // fetch amb temps límit, perquè un servei penjat no bloquegi la traducció
+  async function getJSON(url, ms = 6000) {
+    const ctrl = new AbortController();
+    const t = setTimeout(() => ctrl.abort(), ms);
     try {
-      const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${from.tl}&tl=${to.tl}&dt=t&q=${encodeURIComponent(text)}`;
-      const r = await fetch(url);
-      if (!r.ok) throw new Error('gtx ' + r.status);
-      const d = await r.json();
-      const out = d[0].map(x => x[0]).join('');
-      if (out) return out;
-      throw new Error('buit');
-    } catch (e1) {
-      // 2) Alternativa: MyMemory
-      const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${from.mm}|${to.mm}`;
-      const r = await fetch(url);
-      if (!r.ok) throw new Error('mymemory ' + r.status);
-      const d = await r.json();
-      if (d && d.responseData && d.responseData.translatedText) return d.responseData.translatedText;
-      throw new Error('Sense resposta');
+      const r = await fetch(url, { signal: ctrl.signal });
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return await r.json();
+    } finally { clearTimeout(t); }
+  }
+
+  async function translate(text, from, to) {
+    const q = encodeURIComponent(text);
+    const services = [
+      // 1) Google (gtx, sense clau)
+      async () => {
+        const d = await getJSON(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=${from.tl}&tl=${to.tl}&dt=t&q=${q}`);
+        return (d && d[0] || []).map(x => x && x[0] || '').join('');
+      },
+      // 2) Google (variant dict-chrome-ex, altre format de resposta)
+      async () => {
+        const d = await getJSON(`https://clients5.google.com/translate_a/t?client=dict-chrome-ex&sl=${from.tl}&tl=${to.tl}&q=${q}`);
+        const v = Array.isArray(d) ? d[0] : d;
+        return Array.isArray(v) ? v[0] : (typeof v === 'string' ? v : '');
+      },
+      // 3) MyMemory
+      async () => {
+        const d = await getJSON(`https://api.mymemory.translated.net/get?q=${q}&langpair=${from.mm}|${to.mm}`);
+        const out = d && d.responseData && d.responseData.translatedText || '';
+        return /MYMEMORY WARNING|QUERY LENGTH LIMIT/i.test(out) ? '' : out;
+      }
+    ];
+    for (const s of services) {
+      try { const out = (await s() || '').trim(); if (out) return out; } catch (e) { /* prova el següent */ }
     }
+    throw new Error('Cap servei ha respost');
   }
 
   async function translateFrom(side, speak = true) {
@@ -296,9 +313,14 @@
   /* ---------- Reconeixement de veu ---------- */
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
 
+  let silenceTimer = null;
+
+  // Abandona el dictat sense traduir (canvi d'idioma, esborrar, etc.)
   function stopRec() {
-    if (rec) { try { rec.onend = null; rec.stop(); } catch(e){} rec = null; }
+    clearTimeout(silenceTimer);
+    if (rec) { try { rec.onend = null; rec.onresult = null; rec.abort(); } catch(e){} rec = null; }
     micCa.classList.remove('rec'); micDst.classList.remove('rec');
+    boxCa.classList.remove('interim'); boxDst.classList.remove('interim');
     recSide = null;
   }
 
@@ -306,30 +328,59 @@
     if (!SR) { setStatus('Aquest navegador no admet dictat per veu. Fes servir Safari (iPhone) o Chrome/Edge (ordinador).', 'err'); return; }
     unlockTTS();
     stopSpeak();
-    if (recSide === side) { stopRec(); return; }   // segon toc = aturar
+    // Segon toc al mateix micro = acabar i TRADUIR el que s'ha dit
+    if (recSide === side && rec) { try { rec.stop(); } catch(e){} return; }
     stopRec();
 
     const L = side === 'ca' ? CA : target;
     const box = side === 'ca' ? boxCa : boxDst;
     const mic = side === 'ca' ? micCa : micDst;
-    let finalText = '';
+    const other = side === 'ca' ? boxDst : boxCa;
+    let heard = '';
+    let done = false;
 
     const r = new SR();
     r.lang = L.sr;
     r.interimResults = true;
-    r.continuous = false;
+    r.continuous = true;      // no es talla a la primera pausa; s'atura per silenci o en tornar a tocar
     r.maxAlternatives = 1;
 
-    r.onstart = () => { mic.classList.add('rec'); setStatus('Escoltant en ' + L.name.toLowerCase() + '…'); };
-    r.onresult = ev => {
-      let interim = '';
-      for (let i = ev.resultIndex; i < ev.results.length; i++) {
-        const t = ev.results[i][0].transcript;
-        if (ev.results[i].isFinal) finalText += t; else interim += t;
-      }
-      box.value = (finalText + interim).trim();
-      box.classList.toggle('interim', !!interim && !finalText);
+    // Quan es deixa de parlar 1,6 s, s'atura sol i tradueix
+    const armSilence = () => {
+      clearTimeout(silenceTimer);
+      silenceTimer = setTimeout(() => { try { r.stop(); } catch(e){} }, 1600);
     };
+
+    const finish = () => {
+      if (done) return; done = true;
+      clearTimeout(silenceTimer);
+      mic.classList.remove('rec'); box.classList.remove('interim');
+      if (rec === r) { rec = null; recSide = null; }
+      const text = heard.trim();
+      if (text) { box.value = text; translateFrom(side, true); }
+      else if (!statusEl.classList.contains('err')) setStatus('');
+    };
+
+    r.onstart = () => {
+      box.value = ''; other.value = '';
+      mic.classList.add('rec');
+      setStatus('Escoltant en ' + L.name.toLowerCase() + '… (toca de nou per acabar)');
+      clearTimeout(silenceTimer);
+      silenceTimer = setTimeout(() => { try { r.stop(); } catch(e){} }, 8000); // si no es diu res
+    };
+    r.onresult = ev => {
+      // Es reconstrueix sempre la frase sencera (Safari a l'iPhone sovint no marca "isFinal")
+      let all = '', interim = false;
+      for (let i = 0; i < ev.results.length; i++) {
+        all += ev.results[i][0].transcript;
+        if (!ev.results[i].isFinal) interim = true;
+      }
+      heard = all.replace(/\s+/g, ' ').trim();
+      box.value = heard;
+      box.classList.toggle('interim', interim);
+      armSilence();
+    };
+    r.onspeechend = () => armSilence();
     r.onerror = ev => {
       const m = {
         'not-allowed': 'Permís de micròfon denegat. Activa\'l a la configuració del navegador.',
@@ -339,14 +390,11 @@
         'network': 'Error de xarxa en el reconeixement de veu.',
         'language-not-supported': 'Idioma no admès per al dictat en aquest dispositiu.'
       };
+      if (ev.error === 'aborted') return;
+      if (ev.error === 'no-speech' && heard) return;
       setStatus(m[ev.error] || ('Error de veu: ' + ev.error), 'err');
     };
-    r.onend = () => {
-      mic.classList.remove('rec'); box.classList.remove('interim');
-      rec = null; recSide = null;
-      if (finalText.trim()) { box.value = finalText.trim(); translateFrom(side, true); }
-      else if (!statusEl.classList.contains('err')) setStatus('');
-    };
+    r.onend = finish;
 
     rec = r; recSide = side;
     try { r.start(); } catch (e) { setStatus('No s\'ha pogut iniciar el micròfon.', 'err'); stopRec(); }
