@@ -2,21 +2,27 @@
 <html lang="ca">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Missatge Marquee Intel·ligent</title>
+    <meta name="theme-color" content="#0a0e16">
+    <title>Missatge Intel·ligent</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #0d1117;
-            --card-bg: #161b22;
-            --card-bg-2: #1c2330;
-            --text-color: #f0f6fc;
-            --muted: #8b949e;
-            --accent-color: #238636;
-            --accent-hover: #2ea043;
-            --border-color: #30363d;
-            --focus: #58a6ff;
+            --bg: #0a0e16;
+            --panel: #121927;
+            --panel-2: #0f1522;
+            --field: #0b101b;
+            --line: #243049;
+            --text: #eef2f9;
+            --muted: #9aa7bd;
+            --accent: #ffb938;
+            --accent-2: #ffa11f;
+            --accent-ink: #1b1200;
+            --focus: #7cc4ff;
         }
 
         * {
@@ -27,295 +33,355 @@
             -webkit-tap-highlight-color: transparent;
         }
 
+        html { touch-action: manipulation; -webkit-text-size-adjust: 100%; }
+
         body {
-            background: radial-gradient(1200px 600px at 50% -10%, #1a2332 0%, var(--bg-color) 60%);
-            color: var(--text-color);
+            background:
+                radial-gradient(900px 520px at 50% -12%, #1c2842 0%, transparent 70%),
+                radial-gradient(600px 400px at 100% 100%, rgba(255,185,56,0.06) 0%, transparent 70%),
+                var(--bg);
+            color: var(--text);
             min-height: 100vh;
+            min-height: 100dvh;
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
-            padding: 20px;
+            padding: max(18px, env(safe-area-inset-top)) 16px max(18px, env(safe-area-inset-bottom));
             overflow-x: hidden;
         }
 
-        .container {
-            background: linear-gradient(180deg, var(--card-bg) 0%, var(--card-bg-2) 100%);
-            border: 1px solid var(--border-color);
-            border-radius: 18px;
-            padding: 26px 24px 22px;
-            width: 100%;
-            max-width: 520px;
-            box-shadow: 0 18px 40px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.04);
+        :focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+
+        /* ====== TEMES DE CINTA (única font de veritat de colors) ====== */
+        .themed { background: var(--t-bg); color: var(--t-fg); }
+
+        .t-neon {
+            --t-bg: radial-gradient(ellipse at 50% 50%, #071a12 0%, #020805 78%);
+            --t-fg: #4dffa6;
+            --t-shadow: 0 0 .03em #c9ffe6, 0 0 .14em rgba(77,255,166,.75), 0 0 .4em rgba(77,255,166,.45);
+            --t-font: "Helvetica Neue", Arial, sans-serif;
+            --t-weight: 900; --t-style: normal; --t-spacing: .01em;
+        }
+        .t-arcade {
+            --t-bg: linear-gradient(160deg, #1a1040 0%, #2b1170 55%, #12082e 100%);
+            --t-fg: #ffd23f;
+            --t-shadow: .05em .05em 0 #ff3d8b, .1em .1em 0 rgba(0,0,0,.45);
+            --t-font: "Courier New", Courier, monospace;
+            --t-weight: 900; --t-style: normal; --t-spacing: .02em;
+        }
+        .t-paper {
+            --t-bg: radial-gradient(ellipse at 50% 40%, #faf4e4 0%, #efe4c8 100%);
+            --t-fg: #3a2a14;
+            --t-shadow: 0 .02em 0 rgba(255,255,255,.7);
+            --t-font: Georgia, "Times New Roman", serif;
+            --t-weight: 700; --t-style: normal; --t-spacing: 0;
+        }
+        .t-traffic {
+            --t-bg: #ffd60a;
+            --t-fg: #0b0b0b;
+            --t-shadow: none;
+            --t-font: "Arial Black", Impact, Arial, sans-serif;
+            --t-weight: 900; --t-style: normal; --t-spacing: 0;
+        }
+        .t-cinema {
+            --t-bg: radial-gradient(ellipse at 50% 50%, #3a0c14 0%, #14040a 80%);
+            --t-fg: #f6c453;
+            --t-shadow: 0 0 .25em rgba(246,196,83,.45);
+            --t-font: Georgia, "Times New Roman", serif;
+            --t-weight: 700; --t-style: italic; --t-spacing: .01em;
+        }
+        .t-ocean {
+            --t-bg: linear-gradient(160deg, #04163d 0%, #0a3d82 60%, #0e5aa8 100%);
+            --t-fg: #eaf9ff;
+            --t-shadow: 0 .03em .12em rgba(0,20,60,.55), 0 0 .3em rgba(120,220,255,.35);
+            --t-font: "Trebuchet MS", "Segoe UI", sans-serif;
+            --t-weight: 900; --t-style: normal; --t-spacing: .01em;
+        }
+        .t-digital {
+            --t-bg: radial-gradient(ellipse at 50% 50%, #140402 0%, #050000 80%);
+            --t-fg: #ff4b2b;
+            --t-shadow: 0 0 .04em #ffb199, 0 0 .2em rgba(255,75,43,.75), 0 0 .5em rgba(255,60,20,.4);
+            --t-font: "Share Tech Mono", "Courier New", monospace;
+            --t-weight: 400; --t-style: normal; --t-spacing: .06em;
+        }
+        .t-forest {
+            --t-bg: linear-gradient(160deg, #0a1f15 0%, #12402a 100%);
+            --t-fg: #fff1c1;
+            --t-shadow: 0 0 .2em rgba(255,200,90,.35);
+            --t-font: "Palatino Linotype", Palatino, "Book Antiqua", serif;
+            --t-weight: 700; --t-style: normal; --t-spacing: .01em;
         }
 
-        .header {
+        /* Text en moviment (compartit per vista prèvia i pantalla completa) */
+        .marquee-text {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: max-content;
+            transform: translate(-50%, -50%);
+            white-space: nowrap;
+            line-height: 1;
+            padding: 0 .5em;
+            text-transform: uppercase;
+            font-family: var(--t-font);
+            font-weight: var(--t-weight);
+            font-style: var(--t-style);
+            letter-spacing: var(--t-spacing);
+            text-shadow: var(--t-shadow);
+            will-change: transform;
+        }
+        .marquee-text .emo {
+            padding: 0 .3em;
+            font-style: normal;
+            letter-spacing: 0;
+            text-shadow: none;
+        }
+
+        .run-h { animation: mq-h var(--dur, 10s) linear infinite; }
+        .run-v { animation: mq-v var(--dur, 10s) linear infinite; }
+
+        @keyframes mq-h {
+            from { transform: translate(-50%, -50%) translateX(var(--from)); }
+            to   { transform: translate(-50%, -50%) translateX(var(--to)); }
+        }
+        @keyframes mq-v {
+            from { transform: translate(-50%, -50%) rotate(90deg) translateX(var(--from)); }
+            to   { transform: translate(-50%, -50%) rotate(90deg) translateX(var(--to)); }
+        }
+
+        /* ====== PANTALLA D'ACOLLIDA ====== */
+        .app {
+            width: 100%;
+            max-width: 560px;
+            background: linear-gradient(180deg, var(--panel) 0%, var(--panel-2) 100%);
+            border: 1px solid var(--line);
+            border-radius: 24px;
+            padding: 22px 20px 20px;
+            box-shadow: 0 24px 60px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.05);
+        }
+
+        .head {
             display: flex;
             justify-content: space-between;
             align-items: center;
             gap: 12px;
-            margin-bottom: 22px;
+            margin-bottom: 18px;
         }
-
-        .title-wrap {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            min-width: 0;
-        }
-
+        .brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
         .logo {
-            width: 34px;
-            height: 34px;
-            border-radius: 10px;
-            background: linear-gradient(135deg, #2ea043, #1f6feb);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.1rem;
-            flex-shrink: 0;
-            box-shadow: 0 4px 12px rgba(46,160,67,0.35);
+            width: 40px; height: 40px; border-radius: 12px; flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.25rem;
+            background: linear-gradient(135deg, var(--accent), #ff7a3d);
+            box-shadow: 0 6px 16px rgba(255,150,50,.3);
         }
+        h1 { font-size: 1.12rem; font-weight: 750; letter-spacing: .2px; line-height: 1.15; }
 
-        h1 {
-            font-size: 1.05rem;
-            font-weight: 700;
-            letter-spacing: 0.2px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        select {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            border: 1px solid var(--border-color);
-            padding: 8px 10px;
-            border-radius: 9px;
-            font-size: 0.85rem;
-            outline: none;
-            cursor: pointer;
-            transition: border-color 0.2s;
-        }
-
-        select:focus { border-color: var(--focus); }
-
-        .input-group { margin-bottom: 16px; }
-
-        label {
-            display: block;
-            font-size: 0.8rem;
+        select#lang-select {
+            appearance: none; -webkit-appearance: none;
+            background: var(--field) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%239aa7bd' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 12px center;
+            color: var(--text);
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            padding: 10px 34px 10px 14px;
+            min-height: 44px;
+            font-size: .9rem;
             font-weight: 600;
-            color: var(--muted);
-            margin-bottom: 7px;
-            text-transform: uppercase;
-            letter-spacing: 0.6px;
+            cursor: pointer;
         }
+
+        .stage { margin-bottom: 18px; }
+        .lbl, label {
+            display: block;
+            font-size: .72rem;
+            font-weight: 700;
+            color: var(--muted);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: .7px;
+        }
+
+        .ticker {
+            position: relative;
+            height: 92px;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,.1);
+            box-shadow: inset 0 0 0 1px rgba(0,0,0,.45), inset 0 12px 28px rgba(0,0,0,.22), 0 10px 26px rgba(0,0,0,.4);
+        }
+
+        .field { margin-bottom: 16px; }
 
         textarea {
             width: 100%;
-            height: 96px;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            padding: 13px;
-            font-size: 1rem;
-            resize: none;
-            outline: none;
+            min-height: 88px;
+            background: var(--field);
+            color: var(--text);
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            padding: 14px;
+            font-size: 1.05rem;
             line-height: 1.45;
-            transition: border-color 0.2s, box-shadow 0.2s;
+            resize: none;
+            transition: border-color .2s, box-shadow .2s;
         }
+        textarea:focus { outline: none; border-color: var(--focus); box-shadow: 0 0 0 3px rgba(124,196,255,.18); }
 
-        textarea:focus {
-            border-color: var(--focus);
-            box-shadow: 0 0 0 3px rgba(88,166,255,0.15);
-        }
+        .row { display: flex; gap: 12px; margin-bottom: 16px; }
+        .row .field { flex: 1; margin-bottom: 0; min-width: 0; }
 
-        .row {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 18px;
-        }
-
-        .row .input-group { flex: 1; margin-bottom: 0; }
-
-        /* Selector de cintes */
-        .styles-grid {
+        .seg {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-bottom: 20px;
+            gap: 4px;
+            background: var(--field);
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            padding: 4px;
+        }
+        .seg button {
+            min-height: 44px;
+            border: 0;
+            border-radius: 10px;
+            background: transparent;
+            color: var(--muted);
+            font-size: .82rem;
+            font-weight: 650;
+            cursor: pointer;
+            padding: 0 4px;
+            transition: background .15s, color .15s;
+        }
+        .seg button[aria-checked="true"] {
+            background: #26324d;
+            color: #fff;
+            box-shadow: inset 0 0 0 1.5px var(--accent);
         }
 
+        .styles-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+        }
         .style-card {
-            position: relative;
-            border-radius: 10px;
-            padding: 10px 8px;
+            border: 0;
+            background: transparent;
+            padding: 0;
             cursor: pointer;
-            border: 2px solid transparent;
             text-align: center;
+            color: var(--muted);
+            border-radius: 14px;
+            transition: transform .12s;
+        }
+        .style-card:active { transform: scale(.96); }
+        .style-card .sw {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 54px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,.12);
             overflow: hidden;
-            transition: transform 0.12s, border-color 0.2s, box-shadow 0.2s;
-            user-select: none;
         }
-
-        .style-card:active { transform: scale(0.97); }
-
-        .style-card.selected {
-            border-color: var(--focus);
-            box-shadow: 0 0 0 3px rgba(88,166,255,0.18);
+        .style-card .sample {
+            font-family: var(--t-font);
+            font-weight: var(--t-weight);
+            font-style: var(--t-style);
+            letter-spacing: var(--t-spacing);
+            text-shadow: var(--t-shadow);
+            font-size: 1.3rem;
+            line-height: 1;
         }
-
-        .style-card .preview {
-            font-size: 1.05rem;
-            font-weight: 900;
-            letter-spacing: 0.5px;
-            line-height: 1.2;
-            margin-bottom: 4px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
         .style-card .name {
-            font-size: 0.68rem;
+            display: block;
+            margin-top: 6px;
+            font-size: .7rem;
             font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            opacity: 0.85;
+            letter-spacing: .3px;
+        }
+        .style-card[aria-checked="true"] { color: var(--text); }
+        .style-card[aria-checked="true"] .sw {
+            box-shadow: 0 0 0 2px var(--panel-2), 0 0 0 4px var(--accent);
         }
 
-        /* Previsualitzacions de cada estil */
-        .style-neon { background: #000; }
-        .style-neon .preview { color: #00ff66; text-shadow: 0 0 8px rgba(0,255,102,0.7); font-family: Arial, sans-serif; }
-        .style-neon .name { color: #00ff66; }
-
-        .style-arcade { background: linear-gradient(135deg, #ff00cc, #3333ff); }
-        .style-arcade .preview { color: #ffe600; font-family: "Courier New", monospace; font-weight: 900; }
-        .style-arcade .name { color: #fff; }
-
-        .style-paper { background: #f5ecd7; }
-        .style-paper .preview { color: #4a3a1f; font-family: Georgia, "Times New Roman", serif; }
-        .style-paper .name { color: #7a6440; }
-
-        .style-traffic { background: #ffe600; }
-        .style-traffic .preview { color: #111; font-family: Arial Black, Arial, sans-serif; font-weight: 900; }
-        .style-traffic .name { color: #333; }
-
-        .style-cinema { background: #2b0505; }
-        .style-cinema .preview { color: #ffd700; font-family: Georgia, serif; font-style: italic; }
-        .style-cinema .name { color: #ffd700; }
-
-        .style-ocean { background: linear-gradient(135deg, #0b3d91, #00c6ff); }
-        .style-ocean .preview { color: #fff; font-family: "Trebuchet MS", sans-serif; text-shadow: 0 1px 4px rgba(0,0,0,0.4); }
-        .style-ocean .name { color: #fff; }
-
-        button.btn-launch {
+        .btn-launch {
             width: 100%;
-            background: linear-gradient(180deg, var(--accent-hover), var(--accent-color));
-            color: white;
-            border: none;
-            padding: 15px;
-            border-radius: 10px;
-            font-size: 1rem;
-            font-weight: 700;
-            letter-spacing: 0.3px;
+            margin-top: 20px;
+            min-height: 58px;
+            border: 0;
+            border-radius: 16px;
+            background: linear-gradient(180deg, var(--accent) 0%, var(--accent-2) 100%);
+            color: var(--accent-ink);
+            font-size: 1.08rem;
+            font-weight: 800;
+            letter-spacing: .3px;
             cursor: pointer;
-            transition: transform 0.1s, box-shadow 0.2s, opacity 0.2s;
-            box-shadow: 0 6px 18px rgba(46,160,67,0.35);
+            box-shadow: 0 10px 26px rgba(255,161,31,.28);
+            transition: transform .1s, box-shadow .2s, filter .2s;
         }
-
-        button.btn-launch:hover { box-shadow: 0 8px 24px rgba(46,160,67,0.5); }
-        button.btn-launch:active { transform: translateY(1px); }
-        button.btn-launch:disabled { opacity: 0.65; cursor: wait; }
+        .btn-launch:hover { filter: brightness(1.06); box-shadow: 0 12px 30px rgba(255,161,31,.4); }
+        .btn-launch:active { transform: translateY(1px); }
+        .btn-launch:disabled { opacity: .7; cursor: wait; }
 
         .instructions {
             margin-top: 14px;
-            font-size: 0.78rem;
+            font-size: .8rem;
             color: var(--muted);
             line-height: 1.5;
             text-align: center;
         }
 
-        /* Pantalla Marquee a pantalla completa real */
+        @media (max-width: 380px) {
+            .app { padding: 18px 14px 16px; }
+            .row { flex-direction: column; gap: 16px; }
+            .style-card .name { font-size: .64rem; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .ticker .marquee-text { animation: none !important; }
+        }
+
+        /* ====== PANTALLA COMPLETA ====== */
         #marquee-screen {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background-color: #000;
-            color: #00ff66;
+            inset: 0;
             display: none;
-            justify-content: center;
-            align-items: center;
             z-index: 9999;
             overflow: hidden;
             cursor: pointer;
+            -webkit-user-select: none;
+            user-select: none;
         }
+        #marquee-screen.active { display: block; }
 
-        #marquee-screen.active { display: flex; }
-
-        .marquee-container {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            overflow: hidden;
-            white-space: nowrap;
+        .toast {
+            position: absolute;
+            left: 50%;
+            bottom: max(20px, env(safe-area-inset-bottom));
+            transform: translateX(-50%);
+            max-width: 90vw;
+            padding: 9px 16px;
+            border-radius: 999px;
+            background: rgba(0,0,0,.74);
+            color: #fff;
+            font-size: .9rem;
+            font-weight: 600;
+            text-align: center;
+            opacity: 0;
+            transition: opacity .35s;
+            pointer-events: none;
         }
-
-        .marquee-text {
-            display: inline-block;
-            font-size: 85vh;
-            font-weight: 900;
-            text-transform: uppercase;
-            line-height: 1;
-            animation: marquee linear infinite;
-            will-change: transform;
-        }
-
-        /* Estils de cinta aplicats a la pantalla gran */
-        .cinta-neon { background: #000; color: #00ff66; }
-        .cinta-neon .marquee-text { font-family: Arial, Helvetica, sans-serif; text-shadow: 0 0 25px rgba(0,255,102,0.75); }
-
-        .cinta-arcade { background: linear-gradient(135deg, #ff00cc, #3333ff); color: #ffe600; }
-        .cinta-arcade .marquee-text { font-family: "Courier New", monospace; text-shadow: 3px 3px 0 rgba(0,0,0,0.5); }
-
-        .cinta-paper { background: #f5ecd7; color: #4a3a1f; }
-        .cinta-paper .marquee-text { font-family: Georgia, "Times New Roman", serif; text-shadow: 1px 1px 0 rgba(0,0,0,0.08); }
-
-        .cinta-traffic { background: #ffe600; color: #111; }
-        .cinta-traffic .marquee-text { font-family: "Arial Black", Arial, sans-serif; }
-
-        .cinta-cinema { background: #2b0505; color: #ffd700; }
-        .cinta-cinema .marquee-text { font-family: Georgia, serif; font-style: italic; text-shadow: 0 0 22px rgba(255,215,0,0.55); }
-
-        .cinta-ocean { background: linear-gradient(135deg, #0b3d91, #00c6ff); color: #fff; }
-        .cinta-ocean .marquee-text { font-family: "Trebuchet MS", sans-serif; text-shadow: 0 3px 12px rgba(0,0,0,0.45); }
-
-        @keyframes marquee {
-            0% { transform: translateX(100vw); }
-            100% { transform: translateX(-100%); }
-        }
-
-        @media (max-width: 420px) {
-            .styles-grid { grid-template-columns: repeat(2, 1fr); }
-            h1 { font-size: 0.95rem; }
-            .container { padding: 22px 18px 18px; }
-        }
+        .toast.show { opacity: 1; }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <div class="header">
-            <div class="title-wrap">
-                <div class="logo">💬</div>
-                <h1 id="ui-title">Missatge Intel·ligent</h1>
+    <main class="app">
+        <header class="head">
+            <div class="brand">
+                <div class="logo" aria-hidden="true">💬</div>
+                <h1 id="ui-title" data-i18n="title">Missatge Intel·ligent</h1>
             </div>
-            <select id="lang-select" onchange="changeLanguage()">
+            <select id="lang-select" aria-label="Idioma / Language">
                 <option value="ca" selected>Català</option>
                 <option value="es">Español</option>
                 <option value="fr">Français</option>
@@ -325,234 +391,581 @@
                 <option value="nl">Nederlands</option>
                 <option value="pt">Português</option>
             </select>
-        </div>
+        </header>
 
-        <div class="input-group">
-            <label id="ui-label">Escriu el teu missatge:</label>
-            <textarea id="msg-input">Hola Xavier! Bon dia a tothom.</textarea>
+        <section class="stage">
+            <span class="lbl" data-i18n="preview">Vista prèvia</span>
+            <div class="ticker themed t-neon" id="ticker" aria-hidden="true">
+                <div class="marquee-text" id="ticker-text"></div>
+            </div>
+        </section>
+
+        <div class="field">
+            <label for="msg-input" data-i18n="label">Escriu el teu missatge:</label>
+            <textarea id="msg-input" maxlength="200" rows="3" enterkeyhint="done">Hola Xavier! Bon dia a tothom.</textarea>
         </div>
 
         <div class="row">
-            <div class="input-group">
-                <label id="ui-speed-label">Velocitat:</label>
-                <select id="speed-select">
-                    <option value="slow">Lent</option>
-                    <option value="medium" selected>Mitjà</option>
-                    <option value="fast">Ràpid</option>
-                </select>
+            <div class="field">
+                <span class="lbl" id="ui-speed-label" data-i18n="speed">Velocitat:</span>
+                <div class="seg" id="speed-seg" role="radiogroup" aria-labelledby="ui-speed-label">
+                    <button type="button" role="radio" aria-checked="false" data-value="slow" data-i18n="slow">Lent</button>
+                    <button type="button" role="radio" aria-checked="true" data-value="medium" data-i18n="medium">Mitjà</button>
+                    <button type="button" role="radio" aria-checked="false" data-value="fast" data-i18n="fast">Ràpid</button>
+                </div>
             </div>
-        </div>
-
-        <div class="input-group" style="margin-bottom:10px;">
-            <label id="ui-style-label">Estil de cinta:</label>
-            <div class="styles-grid" id="styles-grid">
-                <div class="style-card style-neon selected" data-style="neon">
-                    <div class="preview">Aa Bb</div>
-                    <div class="name">Neó</div>
-                </div>
-                <div class="style-card style-arcade" data-style="arcade">
-                    <div class="preview">Aa Bb</div>
-                    <div class="name">Arcade</div>
-                </div>
-                <div class="style-card style-paper" data-style="paper">
-                    <div class="preview">Aa Bb</div>
-                    <div class="name">Paper</div>
-                </div>
-                <div class="style-card style-traffic" data-style="traffic">
-                    <div class="preview">Aa Bb</div>
-                    <div class="name">Semàfor</div>
-                </div>
-                <div class="style-card style-cinema" data-style="cinema">
-                    <div class="preview">Aa Bb</div>
-                    <div class="name">Cinema</div>
-                </div>
-                <div class="style-card style-ocean" data-style="ocean">
-                    <div class="preview">Aa Bb</div>
-                    <div class="name">Onada</div>
+            <div class="field">
+                <span class="lbl" id="ui-orient-label" data-i18n="orient">Orientació:</span>
+                <div class="seg" id="orient-seg" role="radiogroup" aria-labelledby="ui-orient-label">
+                    <button type="button" role="radio" aria-checked="true" data-value="auto" data-i18n="auto">Auto</button>
+                    <button type="button" role="radio" aria-checked="false" data-value="landscape" data-i18n="landscape">Horitzontal</button>
+                    <button type="button" role="radio" aria-checked="false" data-value="portrait" data-i18n="portrait">Vertical</button>
                 </div>
             </div>
         </div>
 
-        <button class="btn-launch" id="ui-btn" onclick="launchMarquee()">Llançar Missatge</button>
-
-        <div class="instructions" id="ui-instructions">
-            💡 Fes doble toc a la pantalla en moviment per tornar aquí.
+        <div class="field" style="margin-bottom:0;">
+            <span class="lbl" id="ui-style-label" data-i18n="style">Estil de cinta:</span>
+            <div class="styles-grid" id="styles-grid" role="radiogroup" aria-labelledby="ui-style-label"></div>
         </div>
-    </div>
 
-    <!-- Pantalla de Marquee Gigant -->
-    <div id="marquee-screen" class="cinta-neon" onclick="handleScreenTap(event)">
-        <div class="marquee-container">
-            <div id="m-text" class="marquee-text">✨💡⭐ Missatge...</div>
-        </div>
+        <button type="button" class="btn-launch" id="ui-btn" data-i18n="btn">Llançar Missatge</button>
+
+        <p class="instructions" id="ui-instructions" data-i18n="hint">💡 Fes doble toc a la pantalla per tornar al menú.</p>
+    </main>
+
+    <!-- Pantalla de missatge a pantalla completa -->
+    <div id="marquee-screen" class="themed t-neon">
+        <div id="m-text" class="marquee-text"></div>
+        <div id="toast" class="toast" role="status"></div>
     </div>
 
     <script>
-        const translationsUI = {
-            ca: { title: "Missatge Intel·ligent", label: "Escriu el teu missatge:", speed: "Velocitat:", style: "Estil de cinta:", slow: "Lent", medium: "Mitjà", fast: "Ràpid", btn: "Llançar Missatge", btnLoading: "Traduint…", hint: "💡 Fes doble toc a la pantalla per tornar al menú." },
-            es: { title: "Mensaje Inteligente", label: "Escribe tu mensaje:", speed: "Velocidad:", style: "Estilo de cinta:", slow: "Lento", medium: "Medio", fast: "Rápido", btn: "Lanzar Mensaje", btnLoading: "Traduciendo…", hint: "💡 Haz doble toque en la pantalla para volver al menú." },
-            fr: { title: "Message Intelligent", label: "Écrivez votre message:", speed: "Vitesse:", style: "Style de bandeau:", slow: "Lent", medium: "Moyen", fast: "Rapide", btn: "Lancer le message", btnLoading: "Traduction…", hint: "💡 Appuyez deux fois sur l'écran pour revenir au menu." },
-            en: { title: "Smart Message", label: "Type your message:", speed: "Speed:", style: "Banner style:", slow: "Slow", medium: "Medium", fast: "Fast", btn: "Launch Message", btnLoading: "Translating…", hint: "💡 Double tap on the screen to return to the menu." },
-            de: { title: "Intelligente Nachricht", label: "Schreibe deine Nachricht:", speed: "Geschwindigkeit:", style: "Banner-Stil:", slow: "Langsam", medium: "Mittel", fast: "Schnell", btn: "Nachricht starten", btnLoading: "Übersetzen…", hint: "💡 Doppeltippen auf den Bildschirm, um zum Menü zurückzukehren." },
-            it: { title: "Messaggio Intelligente", label: "Scrivi il tuo messaggio:", speed: "Velocità:", style: "Stile striscione:", slow: "Lento", medium: "Medio", fast: "Veloce", btn: "Lancia Messaggio", btnLoading: "Traduzione…", hint: "💡 Tocca due volte lo schermo per tornare al menu." },
-            nl: { title: "Slim Bericht", label: "Typ je bericht:", speed: "Snelheid:", style: "Stijl van de band:", slow: "Langzaam", medium: "Gemiddeld", fast: "Snel", btn: "Bericht Starten", btnLoading: "Vertalen…", hint: "💡 Dubbel tik op het scherm om terug te keren naar het menu." },
-            pt: { title: "Mensagem Inteligente", label: "Escreva sua mensagem:", speed: "Velocidade:", style: "Estilo da faixa:", slow: "Lento", medium: "Médio", fast: "Rápido", btn: "Lançar Mensagem", btnLoading: "Traduzindo…", hint: "💡 Dê um toque duplo na tela para voltar ao menu." }
+    (() => {
+        'use strict';
+
+        /* ======================= TRADUCCIONS DE LA INTERFÍCIE ======================= */
+        const UI = {
+            ca: { title: "Missatge Intel·ligent", label: "Escriu el teu missatge:", speed: "Velocitat:", orient: "Orientació:", style: "Estil de cinta:", slow: "Lent", medium: "Mitjà", fast: "Ràpid", auto: "Auto", landscape: "Horitzontal", portrait: "Vertical", btn: "Llançar Missatge", btnLoading: "Traduint…", hint: "💡 Fes doble toc a la pantalla per tornar al menú.", preview: "Vista prèvia", exit: "Doble toc per sortir", noTr: "Sense traducció: es mostra el text original", empty: "Missatge buit" },
+            es: { title: "Mensaje Inteligente", label: "Escribe tu mensaje:", speed: "Velocidad:", orient: "Orientación:", style: "Estilo de cinta:", slow: "Lento", medium: "Medio", fast: "Rápido", auto: "Auto", landscape: "Horizontal", portrait: "Vertical", btn: "Lanzar Mensaje", btnLoading: "Traduciendo…", hint: "💡 Haz doble toque en la pantalla para volver al menú.", preview: "Vista previa", exit: "Doble toque para salir", noTr: "Sin traducción: se muestra el texto original", empty: "Mensaje vacío" },
+            fr: { title: "Message Intelligent", label: "Écrivez votre message:", speed: "Vitesse:", orient: "Orientation:", style: "Style de bandeau:", slow: "Lent", medium: "Moyen", fast: "Rapide", auto: "Auto", landscape: "Horizontal", portrait: "Vertical", btn: "Lancer le message", btnLoading: "Traduction…", hint: "💡 Appuyez deux fois sur l'écran pour revenir au menu.", preview: "Aperçu", exit: "Double appui pour quitter", noTr: "Pas de traduction : texte original affiché", empty: "Message vide" },
+            en: { title: "Smart Message", label: "Type your message:", speed: "Speed:", orient: "Orientation:", style: "Banner style:", slow: "Slow", medium: "Medium", fast: "Fast", auto: "Auto", landscape: "Landscape", portrait: "Portrait", btn: "Launch Message", btnLoading: "Translating…", hint: "💡 Double tap on the screen to return to the menu.", preview: "Preview", exit: "Double tap to exit", noTr: "Not translated: showing the original text", empty: "Empty message" },
+            de: { title: "Intelligente Nachricht", label: "Schreibe deine Nachricht:", speed: "Geschwindigkeit:", orient: "Ausrichtung:", style: "Banner-Stil:", slow: "Langsam", medium: "Mittel", fast: "Schnell", auto: "Auto", landscape: "Querformat", portrait: "Hochformat", btn: "Nachricht starten", btnLoading: "Übersetzen…", hint: "💡 Doppeltippen auf den Bildschirm, um zum Menü zurückzukehren.", preview: "Vorschau", exit: "Doppeltippen zum Beenden", noTr: "Nicht übersetzt: Originaltext wird angezeigt", empty: "Leere Nachricht" },
+            it: { title: "Messaggio Intelligente", label: "Scrivi il tuo messaggio:", speed: "Velocità:", orient: "Orientamento:", style: "Stile striscione:", slow: "Lento", medium: "Medio", fast: "Veloce", auto: "Auto", landscape: "Orizzontale", portrait: "Verticale", btn: "Lancia Messaggio", btnLoading: "Traduzione…", hint: "💡 Tocca due volte lo schermo per tornare al menu.", preview: "Anteprima", exit: "Tocca due volte per uscire", noTr: "Non tradotto: viene mostrato il testo originale", empty: "Messaggio vuoto" },
+            nl: { title: "Slim Bericht", label: "Typ je bericht:", speed: "Snelheid:", orient: "Oriëntatie:", style: "Stijl van de band:", slow: "Langzaam", medium: "Gemiddeld", fast: "Snel", auto: "Auto", landscape: "Liggend", portrait: "Staand", btn: "Bericht Starten", btnLoading: "Vertalen…", hint: "💡 Dubbel tik op het scherm om terug te keren naar het menu.", preview: "Voorbeeld", exit: "Dubbel tikken om te sluiten", noTr: "Niet vertaald: originele tekst getoond", empty: "Leeg bericht" },
+            pt: { title: "Mensagem Inteligente", label: "Escreva sua mensagem:", speed: "Velocidade:", orient: "Orientação:", style: "Estilo da faixa:", slow: "Lento", medium: "Médio", fast: "Rápido", auto: "Auto", landscape: "Horizontal", portrait: "Vertical", btn: "Lançar Mensagem", btnLoading: "Traduzindo…", hint: "💡 Dê um toque duplo na tela para voltar ao menu.", preview: "Pré-visualização", exit: "Toque duplo para sair", noTr: "Sem tradução: exibindo o texto original", empty: "Mensagem vazia" }
         };
 
-        let currentStyle = 'neon';
+        const THEMES = [
+            { id: 'neon',    name: 'Neó',     sample: 'Aa' },
+            { id: 'arcade',  name: 'Arcade',  sample: 'Aa' },
+            { id: 'paper',   name: 'Paper',   sample: 'Aa' },
+            { id: 'traffic', name: 'Semàfor', sample: 'Aa' },
+            { id: 'cinema',  name: 'Cinema',  sample: 'Aa' },
+            { id: 'ocean',   name: 'Onada',   sample: 'Aa' },
+            { id: 'digital', name: 'Digital', sample: '88:88' },
+            { id: 'forest',  name: 'Bosc',    sample: 'Aa' }
+        ];
 
-        function changeLanguage() {
-            const lang = document.getElementById('lang-select').value;
-            const t = translationsUI[lang] || translationsUI['en'];
-            document.getElementById('ui-title').innerText = t.title;
-            document.getElementById('ui-label').innerText = t.label;
-            document.getElementById('ui-speed-label').innerText = t.speed;
-            document.getElementById('ui-style-label').innerText = t.style;
+        // Velocitat en "lletres per segon" (em/s): igual de llegible en pantalles petites i grans
+        const SPEEDS = { slow: 1.3, medium: 2.2, fast: 3.6 };
+        const ORIENTS = ['auto', 'landscape', 'portrait'];
 
-            const speedSelect = document.getElementById('speed-select');
-            speedSelect.options[0].text = t.slow;
-            speedSelect.options[1].text = t.medium;
-            speedSelect.options[2].text = t.fast;
+        /* ======================= EMOJIS CONTEXTUALS ======================= */
+        /* EMOJI-START */
+        // [paraules clau (sense accents, minúscules), emojis]. "$" al final = paraula exacta; sense "$" = comença per.
+        const EMOJI_RULES = [
+            // Salutacions i cortesia
+            ['hola$|hello$|hey$|salut$|ciao$|hallo$|bonjour|ola$|buenas$', '👋 😊'],
+            ['benvingu|bienvenid|welcome|willkommen|benvenut|bienvenue|welkom|bem-vind|bem vind', '🤗 👋'],
+            ['adeu|adios|goodbye|bye$|au revoir|tschuss|arrivederci|doei|tchau|fins aviat|hasta luego|hasta pronto|see you|a reveure|a bientot|bis bald|a presto|tot ziens', '👋 😊'],
+            ['bon dia|buenos dias|good morning|guten morgen|buongiorno|goedemorgen|bom dia|matinada|mati$', '☀️ 🌅'],
+            ['bona tarda|buenas tardes|good afternoon|guten tag|buon pomeriggio|goedemiddag|boa tarde|bon apres|tarda$', '🌤️ 😎'],
+            ['bona nit|buenas noches|good night|gute nacht|buonanotte|goedenacht|boa noite|bonne nuit|nit$|noche$|night$|nuit$|nacht$|notte$|dorm|duerm|sleep', '🌙 😴'],
+            ['graci|thank|merci|danke|grazie|bedankt|dank je|obrigad|moltes gr', '🙏 😊'],
+            ['si us plau|siusplau|por favor|please|s il vous plait|bitte$|per favore|alstublieft|alsjeblieft', '🙏 😊'],
+            ['perdo$|perdon|disculp|desculp|lo siento|lamento|entschuldig|scusa|pardon|excuse|sorry|em sap greu', '🙏 😔'],
+            ['ok$|vale$|d acord|de acuerdo|okay|agreed|einverstanden|d accordo|akkoord|perfecte|perfecto|perfect$|parfait|perfekt|perfetto|genial|fantastic|molt be|muy bien|very good|well done|bien fet|buen trabajo|good job|great$|super$', '👍 👏'],
+            ['visca|viva$|vive$|long live|hurra|hooray|hurray|vivat', '🎊 🙌'],
+            ['jaja|haha|hehe|ha ha|lol|broma|joke|humor|chiste|witz|blague|scherzo|grap$|piada|divertit|divertido|funny|amusant|lustig|divertente|grappig', '😂 🤣'],
+            ['tristesa|tristeza|sad$|triste|traurig|plor|llor|cry$|llagrim|condol|descansi en pau|rip$', '😢 🕯️'],
+            ['sorpresa|surprise|surpris|uberraschung|verrassing|surpresa|ostres|uau$|wow$|guau|increible|incredible|incroyable|unglaublich|incredibile|ongelooflijk|increivel', '😮 🤩 ✨'],
 
-            document.getElementById('ui-btn').innerText = t.btn;
-            document.getElementById('ui-instructions').innerText = t.hint;
-        }
+            // Celebracions i festes
+            ['aniversari|cumple|birthday|anniversaire|geburtstag|compleanno|verjaardag|naixement|nacimiento|nasciment', '🎂 🎈 🎁'],
+            ['festa|fiesta|party|fete$|feest|celebr|felic|feliz|congrat|enhorabon|gratulier|complimenti|gefeliciteerd|parabens', '🎉 🥳 🎊'],
+            ['nadal|navidad|christmas|noel$|weihnacht|natale|kerst|natal$', '🎄 🎅 ⭐'],
+            ['any nou|ano nuevo|new year|nouvel an|neujahr|capodanno|nieuwjaar|ano novo|cap d any', '🎆 🥂 🎇'],
+            ['halloween|castanyada|castany|panellet|trick or treat|truc o tracte', '🎃 👻 🌰'],
+            ['pasqua|pascua|easter|paques|ostern|mona$', '🐣 🐰 🥚'],
+            ['sant jordi|rosa$|rosas$|roses$|rose$', '🌹 📖'],
+            ['regal|regalo|gift|cadeau|geschenk|presente$|ofrena|detall', '🎁 🎀'],
+            ['campio|champion|guanyad|ganador|winner|gagnant|gewinner|vincitor|winnaar|vencedor|premi|prize|award|trofeu|trofeo|trophy|medall|medal|victori|victory|exit$|exito|success|bravo|torneig|torneo|tournament|turnier', '🏆 🥇 👏'],
 
-        // Frases comunes per fallback offline
-        const commonPhrases = {
-            "hola": { ca: "Hola", es: "Hola", fr: "Bonjour", en: "Hello", de: "Hallo", it: "Ciao", nl: "Hallo", pt: "Olá" },
-            "bon dia": { ca: "Bon dia", es: "Buenos días", fr: "Bonjour", en: "Good morning", de: "Guten Morgen", it: "Buongiorno", nl: "Goedemorgen", pt: "Bom dia" },
-            "gràcies": { ca: "Gràcies", es: "Gracias", fr: "Merci", en: "Thank you", de: "Danke", it: "Grazie", nl: "Dank je", pt: "Obrigado" },
-            "benvinguts": { ca: "Benvinguts", es: "Bienvenidos", fr: "Bienvenue", en: "Welcome", de: "Willkommen", it: "Benvenuti", nl: "Welkom", pt: "Bem-vindos" }
-        };
+            // Esports i lleure
+            ['futbol|football|soccer|calcio|voetbal|fussball|gol$|gols$|goal$|barca$|partit|match$|penal', '⚽ 🏆 🥅'],
+            ['basquet|baloncesto|basketball|basket$|pallacanestro', '🏀'],
+            ['tennis|tenis$|padel', '🎾'],
+            ['natacio|nedar|nadar|swim|piscin|pool$|schwimm|nuoto|zwem', '🏊 💦'],
+            ['correr|running|cursa|carrera|marato|marathon|jogging|courir|laufen|corsa', '🏃 🏅'],
+            ['bici|bike|cicl|cycl|velo$|fahrrad|fiets', '🚴 🚲'],
+            ['esport|deport|sport|gimnas|gym$|fitness|entren', '🏅 💪'],
+            ['joc$|jocs$|juego|game$|games$|jeu$|spiel|gioco|spel$|jogo|jugar|jugem|escacs|ajedrez|chess|echec|schach|scacchi|schaken|xadrez|cartes$|cartas|cards$|karten|baralla|dau$|dado|dice$|puzzle|trencaclosques|sorteig|sorteo|raffle|loteri|lotter|tombola|bingo', '🎲 🎯 🎮'],
 
-        // Traducció real via MyMemory (gratuïta, sense clau API)
-        async function translatePhrase(text, targetLang) {
-            const clean = text.trim();
-            if (!clean) return clean;
+            // Música, cultura i oci
+            ['music|musik|muziek|canco|cancion|cantar|cantant|song|lied$|canzone|chanson|cancao|cant$|coral|orquestr|orchestra', '🎵 🎶'],
+            ['concert|concierto|konzert|festival|actuacio|actuacion|espectacle|espectaculo|show$|gala$', '🎤 🎸'],
+            ['ball$|balls$|dansa|danza|dance|tanz|danse|baile|bailar|ballare|dans$|danca|sardana', '💃 🕺'],
+            ['teatre|teatro|theatre|theater|schouwburg|opera|musical', '🎭'],
+            ['cine$|cinema|pelicula|film$|films|movie|kino|pellicola|bioscoop|filme|peli$', '🎬 🍿'],
+            ['llibre|libro|book|livre|buch|boek|livro|llegir|leer$|lire$|lesen|leggere|lezen|lectura|poesia|poema|poem|poesie|novel', '📖 📚'],
+            ['museu|museo|exposicio|exposicion|exhibit|galeria|gallery|galerie|galleria|art$|arte$|kunst|pintura|painting|quadre|cuadro', '🏛️ 🖼️'],
+            ['radio|rac1|rac 1|podcast|emissora|emisora|emision|emisio', '📻 🎙️'],
+            ['televisio|television|tv$|tele$|noticia|noticies|news$|nachrichten|notizie|nouvelles|nieuws|diari$|periodic|newspaper|journal|zeitung|giornale|krant|premsa|prensa|press$', '📰 📺'],
 
-            // Si ja està en l'idioma objectiu, no cal traduir
-            if (targetLang === 'ca') return clean;
+            // Menjar i beure
+            ['dinar|comida|almuerzo|lunch|mittag|pranzo|sopar|cena$|dinner|abendessen|esmorzar|desayuno|breakfast|fruhstuck|petit dejeuner|colazione|ontbijt|menjar|comer|manger|essen$|mangiare|eten$|bon profit|buen provecho|bon appetit|guten appetit|buon appetito|smakelijk|menu$|restaurant|ristorante|bar$|bocata|entrepa|sandwich|tapas|aperitiu|aperitivo|aperitif', '🍽️ 😋 🥪'],
+            ['cafe|coffee|kaffee|caffe|koffie|cafeter|capuccino|cappuccino|espresso', '☕ 😌'],
+            ['tea$|tee$|thee$|infusio|infusion|tisana', '🍵'],
+            ['cervesa|cerveza|beer|bier$|birra|biere|cerveja|bira', '🍺 🍻'],
+            ['vi$|vino|wine|wein|vin$|vinho|cava$|champagne|xampany|brindis|brindar|cheers|salud$|prosit|cin cin', '🍷 🥂'],
+            ['pizza', '🍕'],
+            ['paella|arros|arroz|rice$|riso|rijst', '🥘'],
+            ['hamburg|burger', '🍔'],
+            ['gelat|helado|ice cream|glace|eis$|gelato|ijs$|sorvete', '🍦'],
+            ['xocolat|chocolate|schokolade|cioccolat|chocolat|chocolade', '🍫'],
+            ['pastis|tarta|cake|kuchen|torta|gateau|taart|bolo', '🍰'],
+            ['fruita|fruta|fruit|obst$|frutta', '🍎 🍊'],
+            ['verdura|vegetal|vegetable|gemuse|legumes|verdure', '🥦 🥕'],
+            ['cuina|cocina|kitchen|cuisine|kuche|cucina|keuken|cozinha|cuinar|cocinar|cook|cuisiner|kochen|cucinare|koken|cozinhar|recepta|receta|recipe|recette|rezept|ricetta|chef$|cuiner|cocinero|cuoco', '👨‍🍳 🍳'],
 
-            // Fallback ràpid per frases comunes
-            const lower = clean.toLowerCase();
-            if (commonPhrases[lower]) {
-                return commonPhrases[lower][targetLang] || clean;
+            // Viatges i transport
+            ['viatge|viaje|trip$|travel|voyage|reise|viaggio|viagem|vacanc|vacacion|vacation|holiday|urlaub|vacanz|vakantie|ferias|excursio|excursion|ruta$|route$|senderisme|hiking|wandern', '🧳 🗺️ ✈️'],
+            ['platja|playa|beach|plage|strand|spiaggia|praia|mar$|sea$|mer$|meer$|mare$|estiu|verano|summer|ete$|sommer|estate|zomer|verao', '🏖️ 🌊 😎'],
+            ['avio|avion|plane$|airplane|flugzeug|aereo|aeroport|aeropuerto|airport|flughafen|aeroporto|vol$|vuelo|flight|volo|vlucht', '✈️ 🛫'],
+            ['tren$|train$|zug$|treno|trein|comboio|estacio|estacion|station|bahnhof|stazione|renfe|rodalies|metro$|tram$|tramvia', '🚆 🚉'],
+            ['cotxe|coche|voiture|auto$|macchina|carro$|autopista|carretera|road$|trafic|traffic|gasolin|benzin', '🚗 🛣️'],
+            ['autobus|bus$|autocar|parada|bus stop', '🚌 🚏'],
+            ['vaixell|barco|ship|boat|bateau|schiff|nave$|boot$|port$|puerto|harbor|harbour|hafen|ferri|ferry', '⛴️ ⚓'],
+            ['aparcament|parking|estacionament|estacionamiento|parkplatz|parcheggio|parkeer|aparcar|aparcamiento', '🅿️ 🚗'],
+
+            // Temps atmosfèric
+            ['pluja|lluvia|rain|pluie|regen$|pioggia|chuva|plou|llueve|paraigua|paraguas|umbrella|parapluie|regenschirm|ombrello', '🌧️ ☔'],
+            ['sol$|sun$|sunny|soleil|sonne$|sole$|zon$|ensolarad|soleado|assolellat', '☀️ 😎'],
+            ['neu$|nieve|snow|neige|schnee|neve$|sneeuw|neva', '❄️ ⛄'],
+            ['vent$|viento|wind$|vento$|ventol', '💨 🍃'],
+            ['tempesta|tormenta|storm|orage|sturm|temporale|onweer|trons|trueno|thunder|llamp|rayo|lightning', '⛈️ ⚡'],
+            ['calor|heat|hot$|chaleur|hitze|caldo|warm|calid|calent', '🥵 🔥'],
+            ['fred$|frio$|cold$|froid|kalt|freddo|koud|gelada|helada|frost', '🥶 ❄️'],
+            ['boira|niebla|fog$|brouillard|nebel|nebbia', '🌫️'],
+            ['arc de sant|arcoiris|rainbow|arc-en-ciel|regenbogen|arcobaleno|regenboog', '🌈'],
+
+            // Natura i animals
+            ['flor$|flors|flores|flower|fleur|blume|fiore|bloem|florir|primavera|spring$|printemps|fruhling|lente$', '🌸 🌼 🌷'],
+            ['arbre|arbol|tree$|trees$|baum|albero|boom$|arvore', '🌳'],
+            ['jardi|jardin|garden|garten|giardino|tuin|horta|huerto|hort$|plant', '🌱 🌻'],
+            ['muntanya|montana|mountain|montagne|berg$|montagna|montanha|cim$|cumbre|summit|pirineu|pirineos|montserrat', '⛰️ 🥾'],
+            ['bosc|bosque|forest|foret|wald$|foresta|bos$|floresta|natura|nature$|naturaleza', '🌲 🌿'],
+            ['riu$|rius|rio$|river|fleuve|fluss|fiume|rivier|llac|lake$|lac$|lago|pantano', '🏞️ 💧'],
+            ['lluna|luna$|moon|lune|mond$|maan|lua$|eclips', '🌙 🌕'],
+            ['estrella|star$|etoile|stern$|stella|ster$|estrela|estels|astro|astronom|cosmos|univers|galaxi|planeta|planet', '⭐ 🌌 🔭'],
+            ['gos$|gossos|gosset|perro|dog$|chien|hund$|cane$|hond$|cachorro', '🐶 🐕'],
+            ['gat$|gats$|gatet|gato|cat$|chat$|katze|gatto|kat$|poes|gata', '🐱 🐈'],
+            ['ocell|pajaro|bird$|oiseau|vogel|uccello|passaro|aucell', '🐦'],
+            ['peix|pez$|peces|fish$|poisson|fisch|pesce|peixe', '🐟'],
+            ['cavall|caballo|horse|cheval|pferd|cavallo|paard|cavalo', '🐴'],
+            ['vaca$|vaques|cow$|vache|kuh$|mucca|koe$', '🐮'],
+            ['conill|conejo|rabbit|lapin|kaninchen|coniglio|konijn|coelho', '🐰'],
+            ['anec|pato$|duck|canard|anatra|eend', '🦆'],
+
+            // Llocs i edificis
+            ['casa$|cases|home$|hogar|maison|haus$|zuhause|thuis|llar|habitatge|vivienda|piso$|pis$|apartament|apartamento|apartment', '🏠 🏡'],
+            ['esglesia|iglesia|church|eglise|kirche|chiesa|kerk|igreja|ermita|monestir|monasterio|catedral|cathedral|capella|capilla', '⛪'],
+            ['castell|castillo|castle|chateau|schloss|castello|kasteel|castelo|palau|palacio|palace|palais|palast|palazzo|paleis', '🏰'],
+            ['ajuntament|ayuntamiento|town hall|mairie|rathaus|comune|gemeente|municipi|alcald|alcalde', '🏛️ 🏢'],
+            ['escola|escuela|school|ecole|schule|scuola|colegio|institut$|universitat|universidad|university|universite|biblioteca|library|bibliotheque|bibliothek|aula$|classe|clase|class$|taller|workshop|formaci|formation|ausbildung|formazione|opleiding|curs$|cursos$|curso|course|kurs$|corso|cursus|examen|exam$|deures|tarea|homework|profe|teacher|mestre|professor|leccio|leccion|lesson|lecon|lektion|lezione', '📚 ✏️ 🎓'],
+            ['feina|treball|trabaj|trabalh|work|travail|arbeit|lavoro|werk$|reunio|reunion|meeting|besprechung|riunione|vergadering|reuniao|oficina|office|despatx|empresa|company|projecte|proyecto|project|projet|progetto|informe|report|pressupost|presupuesto|budget|client|cliente|customer|equip$|equipo|team$', '💼 📊 📈'],
+
+            // Salut i higiene
+            ['metge|medico|doctor|hospital|farmaci|pharmac|malalt|enfermo|enfermer|nurse|sick$|ill$|grip$|gripe|ambulanc|urgencies|urgencias|emergenc', '🏥 🩺 💊'],
+            ['dentist|dent$|dents$|dientes|zahn|dente', '🦷'],
+            ['higien|hygien|neteja|limpie|limpi|clean|propre|sauber|pulit|schoon|desinfec|renta|lavarse|lavar|wash|lavage|waschen|lavare|wassen|mans$|manos|hands$|mains|hande|handen|mascareta|mascarilla', '🧼 🧴'],
+
+            // Família
+            ['familia|family|famille|familie|famiglia|pares$|padres|parents|eltern|genitori|ouders', '👨‍👩‍👧‍👦 🏡'],
+            ['nen$|nena$|nens$|nenes$|nino|nina|ninos|kid$|kids$|child|enfant|kind$|kinder|bambin|bimbi|kinderen|crianca|infant|infantil|joves$|jove$|joventut', '🧒 🎈'],
+            ['bebe|baby|nadons|neonat|nascut|neixem|born$', '👶 🍼'],
+            ['mare$|mama$|madre|mom$|mum$|mother|maman|mutter|mamma|moeder|mae$', '👩‍👧 💐'],
+            ['pare$|papa$|padre|dad$|father|vater|vader|pai$', '👨‍👧 👔'],
+            ['avi$|avia$|avis$|avies$|abuel|grandma|grandpa|grandmother|grandfather|oma$|opa$|nonn|gent gran|gent major|majors|senior|persones grans|tercera edat|tercera edad|jubilat|jubilad|retired|pension', '👵 👴 🧓'],
+
+            // Amor
+            ['amor|estim|love|liebe|amour|amore|liefde|te quiero|ti amo|ik hou|cor$|corazon|heart|herz|coeur|cuore|hart$|carinyo|carino|abrac|abraz|hug$|besos|petons', '❤️ 💖 🥰'],
+            ['pau$|paz$|peace|paix|frieden|pace$|vrede|llibertat|libertad|freedom|liberte|freiheit|liberta|vrijheid', '🕊️ ☮️'],
+            ['esperanc|esperanz|hope$|espoir|hoffnung|speranza|hoop$|esperanca', '🌈 🤞'],
+            ['sort$|suerte|luck|chance$|gluck|fortuna|geluk|sorte$|bona sort|toi toi', '🍀 🤞'],
+
+            // Avisos i rètols (molt útil en cartells)
+            ['atencio|atencion|attention|achtung|attenzione|aandacht|atencao|alerta|alert|perill|peligro|danger|gefahr|pericolo|gevaar|perigo|cuidado|compte$|precauc|caution|warning|avis$|aviso|prohibit|forbidden|verboten|vietato|verboden|proibido|no passar|no pasar|stop$', '⚠️ 🚨 ⛔'],
+            ['urgent|urgente|urgence|dringend|urgentie|immediat|ara mateix|ahora mismo|right now|asap', '🚨 ⏱️'],
+            ['silenci|silencio|silence|silenz|stille|stilte|shh|callar|no molest|do not disturb|bitte nicht', '🤫 🔇'],
+            ['obert|abierto|open$|ouvert|offen$|aperto|geopend|aberto|obrim|abrimos|opening', '🟢 🚪'],
+            ['tancat|cerrado|closed|ferme$|geschlossen|chiuso|gesloten|fechado|tanquem|cerramos', '🔒 🚫'],
+            ['sortida|salida|exit$|sortie|ausgang|uscita|uitgang|saida|sortir|salir', '🚪 ➡️'],
+            ['entrada|entrance|entree|eingang|ingresso|ingang|entrar', '🚪 ⬅️'],
+            ['lavabo|bany$|banys|bano|toilet|wc$|servei$|serveis$|aseo|restroom|toilette|bagno|toalete', '🚻'],
+            ['ascensor|ascenseur|lift$|elevator|aufzug|ascensore|elevador', '🛗'],
+            ['ajuda|ajudar|ajut$|ajuts$|ayuda|help|aide$|hilfe|aiuto|hulp|socors|socorro|auxili|auxilio|sos$', '🆘 🤝'],
+            ['informacio|informacion|information|informazion|informatie|info$|infos$|consulta', 'ℹ️ 💁'],
+            ['espera$|esperin|aguarde|wait|attente|warten|attesa|wacht|cua$|queue|schlange|torn$|turno|turn$|ticket', '⏳ 🔢'],
+
+            // Diners, compres i temps
+            ['diners|dinero|money|argent|geld$|soldi|dinheiro|euro|preu|precio|price|prix|preis|prezzo|prijs|coste|gratuit|gratis|free$|kostenlos|gratuito', '💶 💰'],
+            ['botiga|tienda|shop|store$|magasin|laden$|negozio|winkel|loja|mercat|mercado|market|marche|markt|mercato|compra|compr|buy$|achat|kauf|acquist|rebaix|rebaja|sale$|oferta|offer|descompte|descuento|discount|soldes|angebot|saldi|promo', '🛍️ 🏷️'],
+            ['nou$|nova$|nous$|noves$|nuevo|nueva|new$|nouveau|nouvelle|nuovo|nieuw|novo$|novetat|novedad', '🆕 ✨'],
+            ['rellotge|reloj|clock|horloge|uhr$|orologio|klok$|relogio|hora$|hores$|hour|stunde|heure|ora$|ore$|uur$|horari|horario|schedule|puntual|punctual|calendari|calendario|calendar|agenda|data$|fecha|date$|datum|dema$|tomorrow|demain|domani', '⏰ 📅'],
+
+            // Tecnologia
+            ['ordinador|ordenador|computer|informatic|internet|wifi|wi-fi|mobil|movil|smartphone|phone$|telefon|telephone|handy$|whatsapp|google|app$|aplicaci|application|software|programa|programming|codi$|codigo|web$|website|xarxa|network|digital|tecnolog|technolog|tablet|pantalla|screen', '💻 📱 🌐'],
+            ['email|e-mail|correu|correo|mail$|courriel|carta|letter$|lettre', '✉️ 📧'],
+            ['foto|photo|fotograf|picture|imatge|imagen|image$|bild$|immagine|beeld|selfie', '📷 🖼️'],
+            ['video|youtube|streaming|en directe|en vivo|en direct|dal vivo|live$', '🎥 📺'],
+            ['intel·lig|inteligen|intellig|artificial|robot|chatgpt|claude|gemini|ia$|ai$|ki$', '🤖 ✨'],
+            ['llum|luz|light$|lumiere|licht|luce|ilumin|lamp|bombeta|bombilla|bulb|ampoule|gluhbirne|lampadina|quinque', '💡 ✨'],
+            ['electric|elektr|energi|energy|corrent|bateria|battery|carreg|charge$|cargar|batterie|batteria', '⚡ 🔋']
+        ];
+
+        const escRe = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const normalize = s => s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/['’‘`´]/g, ' ');
+
+        const RULES = EMOJI_RULES.map(([keys, emo]) => ({
+            re: new RegExp(keys.split('|').filter(Boolean).map(k =>
+                k.endsWith('$') ? '\\b' + escRe(k.slice(0, -1)) + '\\b' : '\\b' + escRe(k)
+            ).join('|')),
+            e: emo.split(' ')
+        }));
+
+        // Tria fins a `max` emojis coherents amb el missatge. Si l'usuari ja n'ha escrit, no n'afegeix.
+        function pickEmojis(raw, translated = '', max = 3) {
+            if (/\p{Extended_Pictographic}/u.test(raw)) return [];
+            const norm = normalize(raw + ' ' + translated);
+            const hits = [];
+            for (const r of RULES) {
+                const m = r.re.exec(norm);
+                if (m) hits.push({ i: m.index, e: r.e });
             }
-
-            try {
-                const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(clean)}&langpair=ca|${targetLang}`;
-                const res = await fetch(url);
-                if (!res.ok) throw new Error('network');
-                const data = await res.json();
-                const translated = data?.responseData?.translatedText;
-                if (translated && typeof translated === 'string' && translated.length > 0) {
-                    // MyMemory a vegades retorna missatges d'error
-                    if (translated.toUpperCase().includes('MYMEMORY WARNING')) {
-                        return clean;
-                    }
-                    return translated;
+            hits.sort((a, b) => a.i - b.i);
+            const out = [];
+            for (let k = 0; k < 3 && out.length < max; k++) {
+                for (const h of hits) {
+                    const em = h.e[k];
+                    if (em && !out.includes(em) && out.length < max) out.push(em);
                 }
-                return clean;
-            } catch (err) {
-                return clean;
+            }
+            if (out.length) return out;
+            // Cap paraula clau: emojis segons el to de la frase, així sempre n'hi ha
+            if (/[?¿]/.test(raw)) return ['🤔', '💭', '❓'];
+            if (/[!¡]/.test(raw)) return ['✨', '🎈', '💫'];
+            return ['💬', '✨', '💡'];
+        }
+        /* EMOJI-END */
+
+        /* ======================= TRADUCCIÓ ======================= */
+        const LANG_ORDER = ['es', 'fr', 'en', 'de', 'it', 'nl', 'pt'];
+        const COMMON_RAW = [
+            ['hola', ['Hola', 'Bonjour', 'Hello', 'Hallo', 'Ciao', 'Hallo', 'Olá']],
+            ['bon dia', ['Buenos días', 'Bonjour', 'Good morning', 'Guten Morgen', 'Buongiorno', 'Goedemorgen', 'Bom dia']],
+            ['bona tarda', ['Buenas tardes', 'Bon après-midi', 'Good afternoon', 'Guten Tag', 'Buon pomeriggio', 'Goedemiddag', 'Boa tarde']],
+            ['bona nit', ['Buenas noches', 'Bonne nuit', 'Good night', 'Gute Nacht', 'Buonanotte', 'Goedenacht', 'Boa noite']],
+            ['gracies', ['Gracias', 'Merci', 'Thank you', 'Danke', 'Grazie', 'Dank je', 'Obrigado']],
+            ['benvinguts', ['Bienvenidos', 'Bienvenue', 'Welcome', 'Willkommen', 'Benvenuti', 'Welkom', 'Bem-vindos']],
+            ['adeu', ['Adiós', 'Au revoir', 'Goodbye', 'Tschüss', 'Arrivederci', 'Doei', 'Adeus']],
+            ['felicitats', ['Felicidades', 'Félicitations', 'Congratulations', 'Glückwunsch', 'Congratulazioni', 'Gefeliciteerd', 'Parabéns']],
+            ['atencio', ['Atención', 'Attention', 'Attention', 'Achtung', 'Attenzione', 'Aandacht', 'Atenção']],
+            ['obert', ['Abierto', 'Ouvert', 'Open', 'Geöffnet', 'Aperto', 'Open', 'Aberto']],
+            ['tancat', ['Cerrado', 'Fermé', 'Closed', 'Geschlossen', 'Chiuso', 'Gesloten', 'Fechado']]
+        ];
+        const COMMON = {};
+        COMMON_RAW.forEach(([k, arr]) => {
+            COMMON[k] = {};
+            LANG_ORDER.forEach((l, i) => { COMMON[k][l] = arr[i]; });
+        });
+
+        const trCache = new Map();
+        const decodeEntities = s => new DOMParser().parseFromString(s, 'text/html').documentElement.textContent;
+
+        // Retorna { text, ok }. ok=false si no s'ha pogut traduir (es mostra l'original).
+        async function translatePhrase(text, lang) {
+            const clean = text.trim();
+            if (!clean || lang === 'ca') return { text: clean, ok: true };
+
+            const key = normalize(clean).replace(/[.!¡?¿,;:\s]+$/g, '').trim();
+            if (COMMON[key] && COMMON[key][lang]) return { text: COMMON[key][lang], ok: true };
+
+            const ck = lang + '|' + clean;
+            if (trCache.has(ck)) return { text: trCache.get(ck), ok: true };
+            if (clean.length > 450) return { text: clean, ok: false };
+
+            const ctrl = new AbortController();
+            const timer = setTimeout(() => ctrl.abort(), 7000);
+            try {
+                const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(clean)}&langpair=ca|${lang}`;
+                const res = await fetch(url, { signal: ctrl.signal });
+                if (!res.ok) throw new Error('http');
+                const data = await res.json();
+                let out = data && data.responseData && data.responseData.translatedText;
+                if (typeof out !== 'string' || !out.trim() || /MYMEMORY WARNING|QUERY LENGTH LIMIT|INVALID/i.test(out)) throw new Error('bad');
+                out = decodeEntities(out);
+                trCache.set(ck, out);
+                return { text: out, ok: true };
+            } catch (e) {
+                return { text: clean, ok: false };
+            } finally {
+                clearTimeout(timer);
             }
         }
 
-        function getContextualEmojis(text) {
-            const t = text.toLowerCase();
-            if (t.includes('festa') || t.includes('feliç') || t.includes('aniversari') || t.includes('party') || t.includes('fiesta') || t.includes('fête')) return "🎉🥳🎂";
-            if (t.includes('futbol') || t.includes('partit') || t.includes('gol') || t.includes('match') || t.includes('sport') || t.includes('esport')) return "⚽🏆🔥";
-            if (t.includes('amor') || t.includes('testimo') || t.includes('love') || t.includes('cor')) return "❤️💖🥰";
-            if (t.includes('atenció') || t.includes('alerta') || t.includes('perill') || t.includes('danger') || t.includes('atención')) return "⚠️🚨❗";
-            if (t.includes('feina') || t.includes('reunió') || t.includes('treball') || t.includes('work') || t.includes('meeting')) return "💼📊📈";
-            return "✨💡⭐";
+        /* ======================= ESTAT I ELEMENTS ======================= */
+        const $ = id => document.getElementById(id);
+        const input = $('msg-input');
+        const langSel = $('lang-select');
+        const btn = $('ui-btn');
+        const ticker = $('ticker');
+        const tickerText = $('ticker-text');
+        const screenEl = $('marquee-screen');
+        const mText = $('m-text');
+        const toast = $('toast');
+
+        const STORE_KEY = 'mq-intelligent-v2';
+        const state = { lang: 'ca', style: 'neon', speed: 'medium', orient: 'auto', active: false };
+        let launching = false, fsEntered = false, wakeLock = null, toastTimer = null, lastTap = 0;
+
+        const T = () => UI[state.lang] || UI.en;
+
+        function loadState() {
+            try {
+                const s = JSON.parse(localStorage.getItem(STORE_KEY) || '{}');
+                if (UI[s.lang]) state.lang = s.lang;
+                if (THEMES.some(t => t.id === s.style)) state.style = s.style;
+                if (SPEEDS[s.speed]) state.speed = s.speed;
+                if (ORIENTS.includes(s.orient)) state.orient = s.orient;
+                if (typeof s.msg === 'string' && s.msg.trim()) input.value = s.msg;
+            } catch (e) { /* sense emmagatzematge */ }
+        }
+        function saveState() {
+            try {
+                localStorage.setItem(STORE_KEY, JSON.stringify({
+                    lang: state.lang, style: state.style, speed: state.speed, orient: state.orient, msg: input.value
+                }));
+            } catch (e) { /* sense emmagatzematge */ }
+        }
+        const debounce = (fn, ms) => { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); }; };
+
+        /* ======================= INTERFÍCIE ======================= */
+        function applyLanguage() {
+            const t = T();
+            document.documentElement.lang = state.lang;
+            document.title = t.title;
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                if (t[el.dataset.i18n] !== undefined && !(el === btn && launching)) el.textContent = t[el.dataset.i18n];
+            });
+            langSel.value = state.lang;
         }
 
-        function setStyle(style) {
-            currentStyle = style;
-            document.querySelectorAll('.style-card').forEach(c => {
-                c.classList.toggle('selected', c.dataset.style === style);
+        function syncSeg(seg, val) {
+            seg.querySelectorAll('button').forEach(b => b.setAttribute('aria-checked', String(b.dataset.value === val)));
+        }
+        function bindSeg(id, key) {
+            const seg = $(id);
+            syncSeg(seg, state[key]);
+            seg.addEventListener('click', e => {
+                const b = e.target.closest('button[data-value]');
+                if (!b) return;
+                state[key] = b.dataset.value;
+                syncSeg(seg, state[key]);
+                saveState();
+                refreshTicker();
             });
         }
 
-        // Inicialitzar clic a les targetes d'estil
-        document.querySelectorAll('.style-card').forEach(card => {
-            card.addEventListener('click', () => setStyle(card.dataset.style));
-        });
+        function buildStyleGrid() {
+            const grid = $('styles-grid');
+            THEMES.forEach(th => {
+                const b = document.createElement('button');
+                b.type = 'button';
+                b.className = 'style-card';
+                b.dataset.style = th.id;
+                b.setAttribute('role', 'radio');
+                b.setAttribute('aria-label', th.name);
+                b.innerHTML = `<span class="sw themed t-${th.id}"><span class="sample">${th.sample}</span></span><span class="name">${th.name}</span>`;
+                b.addEventListener('click', () => { state.style = th.id; syncStyles(); saveState(); refreshTicker(); });
+                grid.appendChild(b);
+            });
+            syncStyles();
+        }
+        function syncStyles() {
+            document.querySelectorAll('.style-card').forEach(c => c.setAttribute('aria-checked', String(c.dataset.style === state.style)));
+        }
 
-        let lastTap = 0;
+        /* ======================= MOVIMENT ======================= */
+        function renderContent(el, text, emojis) {
+            el.replaceChildren();
+            const mk = (cls, txt) => { const s = document.createElement('span'); if (cls) s.className = cls; s.textContent = txt; return s; };
+            if (emojis.length) {
+                const e = emojis.join(' ');
+                el.append(mk('emo', e), mk('', text), mk('emo', e));
+            } else {
+                el.append(mk('', text));
+            }
+        }
+
+        // Entra des d'un costat i surt totalment per l'altre; la durada depèn de la mida de lletra (velocitat constant de lectura)
+        function startMotion(el, { areaW, areaH, vertical, fontPx, speed }) {
+            el.classList.remove('run-h', 'run-v');
+            el.style.fontSize = fontPx + 'px';
+            const tw = el.offsetWidth;
+            const half = (vertical ? areaH : areaW) / 2 + tw / 2;
+            const dur = Math.max(3, (half * 2) / (fontPx * SPEEDS[speed]));
+            el.style.setProperty('--from', half + 'px');
+            el.style.setProperty('--to', (-half) + 'px');
+            el.style.setProperty('--dur', dur.toFixed(2) + 's');
+            void el.offsetWidth;
+            el.classList.add(vertical ? 'run-v' : 'run-h');
+        }
+
+        function isVertical() {
+            // Només es gira el text si l'usuari tria explícitament "Vertical"; en Auto sempre va de dreta a esquerra
+            return state.orient === 'portrait';
+        }
+
+        function layoutMarquee() {
+            const W = window.innerWidth, H = window.innerHeight;
+            startMotion(mText, { areaW: W, areaH: H, vertical: isVertical(), fontPx: Math.round(Math.min(W, H) * 0.9), speed: state.speed });
+        }
+
+        function updateTicker() {
+            const raw = input.value.trim() || T().empty;
+            ticker.className = 'ticker themed t-' + state.style;
+            renderContent(tickerText, raw, pickEmojis(raw));
+            startMotion(tickerText, {
+                areaW: ticker.clientWidth, areaH: ticker.clientHeight, vertical: false,
+                fontPx: Math.round(ticker.clientHeight * 0.6), speed: state.speed
+            });
+        }
+        const refreshTicker = debounce(updateTicker, 120);
+
+        /* ======================= PANTALLA COMPLETA ======================= */
+        function showToast(msg, ms = 3200) {
+            toast.textContent = msg;
+            toast.classList.add('show');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => toast.classList.remove('show'), ms);
+        }
+
+        async function lockScreen() {
+            try { if ('wakeLock' in navigator) wakeLock = await navigator.wakeLock.request('screen'); } catch (e) { /* no disponible */ }
+        }
+        function unlockScreen() {
+            try { if (wakeLock) wakeLock.release(); } catch (e) { /* res */ }
+            wakeLock = null;
+        }
+
+        async function enterFullscreen() {
+            try {
+                if (screenEl.requestFullscreen) { await screenEl.requestFullscreen({ navigationUI: 'hide' }); fsEntered = true; }
+                else if (screenEl.webkitRequestFullscreen) { screenEl.webkitRequestFullscreen(); fsEntered = true; }
+            } catch (e) { /* iOS no ho permet: la capa fixa ja ocupa tota la pantalla */ }
+        }
 
         async function launchMarquee() {
-            const rawText = document.getElementById('msg-input').value.trim() || "Missatge buit";
-            const targetLang = document.getElementById('lang-select').value;
-            const speed = document.getElementById('speed-select').value;
-            const btn = document.getElementById('ui-btn');
-            const originalLabel = btn.innerText;
-
-            // Estat de càrrega
-            const t = translationsUI[targetLang] || translationsUI['en'];
+            if (launching) return;
+            launching = true;
+            const t = T();
             btn.disabled = true;
-            btn.innerText = t.btnLoading || "…";
+            btn.textContent = t.btnLoading;
 
-            let translatedText;
-            try {
-                translatedText = await translatePhrase(rawText, targetLang);
-            } catch (e) {
-                translatedText = rawText;
-            }
+            // Pantalla completa DINS del gest de l'usuari (abans de qualsevol espera) perquè el navegador amagui la barra superior
+            mText.classList.remove('run-h', 'run-v');
+            mText.replaceChildren();
+            screenEl.className = 'themed t-' + state.style + ' active';
+            state.active = true;
+            lastTap = 0;
+            enterFullscreen();
 
+            const raw = input.value.trim() || t.empty;
+            let tr = { text: raw, ok: true };
+            try { tr = await translatePhrase(raw, state.lang); } catch (e) { /* es mostra l'original */ }
+            try { await Promise.race([document.fonts.ready, new Promise(r => setTimeout(r, 800))]); } catch (e) { /* res */ }
+
+            launching = false;
             btn.disabled = false;
-            btn.innerText = originalLabel;
+            btn.textContent = T().btn;
 
-            const emojis = getContextualEmojis(rawText);
-            const fullText = `${emojis} ${translatedText}     `;
-            const elem = document.getElementById('m-text');
-            elem.innerText = fullText;
+            if (!state.active) return; // l'usuari ha tancat la cinta mentre es traduïa
 
-            // Ajustar mida del text perquè no es talli en mòbils
-            const isSmall = window.innerWidth < 600;
-            elem.style.fontSize = isSmall ? '40vh' : '85vh';
+            renderContent(mText, tr.text, pickEmojis(raw, tr.text));
+            layoutMarquee();
 
-            let duration = 12;
-            if (speed === 'slow') duration = 22;
-            if (speed === 'fast') duration = 6;
+            showToast(tr.ok ? t.exit : `${t.exit} · ${t.noTr}`, tr.ok ? 2600 : 4200);
+            lockScreen();
+        }
 
-            // Reiniciar animació
-            elem.style.animation = 'none';
-            void elem.offsetWidth;
-            elem.style.animation = `marquee ${duration}s linear infinite`;
-
-            // Aplicar estil de cinta
-            const screen = document.getElementById('marquee-screen');
-            screen.className = 'cinta-' + currentStyle;
-            screen.classList.add('active');
-
-            if (screen.requestFullscreen) {
-                screen.requestFullscreen().catch(() => {});
-            } else if (screen.webkitRequestFullscreen) {
-                screen.webkitRequestFullscreen();
+        function exitMarquee(fromFullscreenEvent) {
+            if (!state.active) return;
+            state.active = false;
+            screenEl.classList.remove('active');
+            mText.classList.remove('run-h', 'run-v');
+            clearTimeout(toastTimer);
+            toast.classList.remove('show');
+            unlockScreen();
+            const wasFs = fsEntered;
+            fsEntered = false;
+            if (wasFs && !fromFullscreenEvent) {
+                try {
+                    if (document.exitFullscreen) document.exitFullscreen().catch(() => {});
+                    else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+                } catch (e) { /* res */ }
             }
         }
 
-        function handleScreenTap(e) {
-            const currentTime = new Date().getTime();
-            const tapLength = currentTime - lastTap;
-            if (tapLength < 300 && tapLength > 0) {
-                exitMarquee();
-            }
-            lastTap = currentTime;
-        }
+        /* ======================= ESDEVENIMENTS ======================= */
+        langSel.addEventListener('change', () => {
+            state.lang = langSel.value;
+            applyLanguage();
+            saveState();
+            refreshTicker();
+        });
+        input.addEventListener('input', () => { saveState(); refreshTicker(); });
+        input.addEventListener('keydown', e => { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); launchMarquee(); } });
+        btn.addEventListener('click', launchMarquee);
 
-        function exitMarquee() {
-            const screen = document.getElementById('marquee-screen');
-            screen.classList.remove('active');
-            if (document.exitFullscreen) {
-                document.exitFullscreen().catch(() => {});
-            } else if (document.webkitExitFullscreen) {
-                document.webkitExitFullscreen();
-            }
-        }
+        screenEl.addEventListener('click', () => {
+            const now = Date.now();
+            if (now - lastTap < 350) { lastTap = 0; exitMarquee(); } else { lastTap = now; }
+        });
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') exitMarquee(); });
+
+        const onFsChange = () => {
+            if (!document.fullscreenElement && !document.webkitFullscreenElement && fsEntered && state.active) exitMarquee(true);
+        };
+        document.addEventListener('fullscreenchange', onFsChange);
+        document.addEventListener('webkitfullscreenchange', onFsChange);
+        document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && state.active) lockScreen(); });
+
+        window.addEventListener('resize', debounce(() => {
+            if (state.active) layoutMarquee();
+            updateTicker();
+        }, 150));
+
+        /* ======================= INICI ======================= */
+        loadState();
+        buildStyleGrid();
+        bindSeg('speed-seg', 'speed');
+        bindSeg('orient-seg', 'orient');
+        applyLanguage();
+        updateTicker();
+        if (document.fonts && document.fonts.ready) document.fonts.ready.then(updateTicker);
+    })();
     </script>
 </body>
 </html>
