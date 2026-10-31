@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Missatge Marquee mòbil</title>
+    <title>Missatge Marquee Pantalla Completa</title>
     <style>
         :root {
             --bg-color: #0d1117;
@@ -54,7 +54,7 @@
         }
 
         h1 {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             font-weight: 600;
         }
 
@@ -62,26 +62,26 @@
             background-color: var(--bg-color);
             color: var(--text-color);
             border: 1px solid var(--border-color);
-            padding: 8px 12px;
+            padding: 6px 10px;
             border-radius: 8px;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             outline: none;
         }
 
         .input-group {
-            margin-bottom: 20px;
+            margin-bottom: 16px;
         }
 
         label {
             display: block;
             font-size: 0.85rem;
             color: #8b949e;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
         textarea {
             width: 100%;
-            height: 100px;
+            height: 90px;
             background-color: var(--bg-color);
             color: var(--text-color);
             border: 1px solid var(--border-color);
@@ -94,6 +94,17 @@
 
         textarea:focus {
             border-color: #58a6ff;
+        }
+
+        .row {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .row .input-group {
+            flex: 1;
+            margin-bottom: 0;
         }
 
         button.btn-launch {
@@ -113,7 +124,7 @@
             background-color: var(--accent-hover);
         }
 
-        /* Pantalla Marquee a pantalla completa */
+        /* Pantalla Marquee a pantalla completa real */
         #marquee-screen {
             position: fixed;
             top: 0;
@@ -123,47 +134,35 @@
             background-color: #000;
             color: #00ff66;
             display: none;
-            flex-direction: column;
-            justify-content: space-around;
+            justify-content: center;
             align-items: center;
             z-index: 9999;
             overflow: hidden;
-            padding: 20px 0;
             cursor: pointer;
         }
 
-        .marquee-track {
+        .marquee-container {
             width: 100%;
-            white-space: nowrap;
+            height: 100%;
+            display: flex;
+            align-items: center;
             overflow: hidden;
-            box-sizing: border-box;
-            font-size: 7vw;
-            font-weight: bold;
-            text-transform: uppercase;
-            text-shadow: 0 0 10px rgba(0,255,102,0.6);
+            white-space: nowrap;
         }
 
-        .marquee-track span {
+        .marquee-text {
             display: inline-block;
-            animation: marquee 12s linear infinite;
-        }
-
-        /* Direccions alternades per donar dinamisme vertical i horitzontal */
-        .marquee-track.rev span {
-            animation-direction: reverse;
-            animation-duration: 15s;
-            color: #00d2ff;
-            text-shadow: 0 0 10px rgba(0,210,255,0.6);
-        }
-
-        .marquee-track.mid span {
-            animation-duration: 9s;
-            color: #ff007f;
-            text-shadow: 0 0 10px rgba(255,0,127,0.6);
+            /* Ocupa pràcticament tota l'alçada disponible a la pantalla */
+            font-size: 85vh; 
+            font-weight: 900;
+            text-transform: uppercase;
+            line-height: 1;
+            text-shadow: 0 0 20px rgba(0,255,102,0.5);
+            animation: marquee linear infinite;
         }
 
         @keyframes marquee {
-            0% { transform: translateX(100%); }
+            0% { transform: translateX(100vw); }
             100% { transform: translateX(-100%); }
         }
 
@@ -179,7 +178,7 @@
 
     <div class="container">
         <div class="header">
-            <h1 id="ui-title">Missatge mòbil</h1>
+            <h1 id="ui-title">Missatge Gigant</h1>
             <select id="lang-select" onchange="changeLanguage()">
                 <option value="ca" selected>Català</option>
                 <option value="es">Español</option>
@@ -194,42 +193,44 @@
 
         <div class="input-group">
             <label id="ui-label">Escriu el teu missatge:</label>
-            <textarea id="msg-input">Hola Xavier! Benvingut a la prova.</textarea>
+            <textarea id="msg-input">Hola Xavier! Benvingut.</textarea>
+        </div>
+
+        <div class="row">
+            <div class="input-group">
+                <label id="ui-speed-label">Velocitat:</label>
+                <select id="speed-select">
+                    <option value="slow">Lent</option>
+                    <option value="medium" selected>Mitjà</option>
+                    <option value="fast">Ràpid</option>
+                </select>
+            </div>
         </div>
 
         <button class="btn-launch" id="ui-btn" onclick="launchMarquee()">Llançar Missatge</button>
 
         <div class="instructions" id="ui-instructions">
-            💡 Fes doble toc (two taps) a la pantalla de text en moviment per tornar aquí.
+            💡 Fes doble toc a la pantalla en moviment per tornar aquí.
         </div>
     </div>
 
-    <!-- Pantalla de Marquee a Pantalla Completa -->
+    <!-- Pantalla de Marquee Gigant -->
     <div id="marquee-screen" onclick="handleScreenTap(event)">
-        <div class="marquee-track">
-            <span id="m1">🌟🚀🔥 Missatge...</span>
-        </div>
-        <div class="marquee-track rev">
-            <span id="m2">⚡🎯💡 Missatge...</span>
-        </div>
-        <div class="marquee-track mid">
-            <span id="m3">💎🌍🎨 Missatge...</span>
-        </div>
-        <div class="marquee-track">
-            <span id="m4">🚀🔥🌟 Missatge...</span>
+        <div class="marquee-container">
+            <div id="m-text" class="marquee-text">🌟🚀🔥 Missatge...</div>
         </div>
     </div>
 
     <script>
         const translations = {
-            ca: { title: "Missatge mòbil", label: "Escriu el teu missatge:", btn: "Llançar Missatge", hint: "💡 Fes doble toc a la pantalla per tornar al menú." },
-            es: { title: "Mensaje móvil", label: "Escribe tu mensaje:", btn: "Lanzar Mensaje", hint: "💡 Haz doble toque en la pantalla para volver al menú." },
-            fr: { title: "Message mobile", label: "Écrivez votre message:", btn: "Lancer le message", hint: "💡 Appuyez deux fois sur l'écran pour revenir au menu." },
-            en: { title: "Mobile Message", label: "Type your message:", btn: "Launch Message", hint: "💡 Double tap on the screen to return to the menu." },
-            de: { title: "Handy-Nachricht", label: "Schreibe deine Nachricht:", btn: "Nachricht starten", hint: "💡 Doppeltippen auf den Bildschirm, um zum Menü zurückzukehren." },
-            it: { title: "Messaggio mobile", label: "Scrivi il tuo messaggio:", btn: "Lancia Messaggio", hint: "💡 Tocca due volte lo schermo per tornare al menu." },
-            nl: { title: "Mobiel Bericht", label: "Typ je bericht:", btn: "Bericht Starten", hint: "💡 Dubbel tik op het scherm om terug te keren naar het menu." },
-            pt: { title: "Mensagem móvel", label: "Escreva sua mensagem:", btn: "Lançar Mensagem", hint: "💡 Dê um toque duplo na tela para voltar ao menu." }
+            ca: { title: "Missatge Gigant", label: "Escriu el teu missatge:", speed: "Velocitat:", slow: "Lent", medium: "Mitjà", fast: "Ràpid", btn: "Llançar Missatge", hint: "💡 Fes doble toc a la pantalla per tornar al menú." },
+            es: { title: "Mensaje Gigante", label: "Escribe tu mensaje:", speed: "Velocidad:", slow: "Lento", medium: "Medio", fast: "Rápido", btn: "Lanzar Mensaje", hint: "💡 Haz doble toque en la pantalla para volver al menú." },
+            fr: { title: "Message Géant", label: "Écrivez votre message:", speed: "Vitesse:", slow: "Lent", medium: "Moyen", fast: "Rapide", btn: "Lancer le message", hint: "💡 Appuyez deux fois sur l'écran pour revenir au menu." },
+            en: { title: "Giant Message", label: "Type your message:", speed: "Speed:", slow: "Slow", medium: "Medium", fast: "Fast", btn: "Launch Message", hint: "💡 Double tap on the screen to return to the menu." },
+            de: { title: "Riesenbotschaft", label: "Schreibe deine Nachricht:", speed: "Geschwindigkeit:", slow: "Langsam", medium: "Mittel", fast: "Schnell", btn: "Nachricht starten", hint: "💡 Doppeltippen auf den Bildschirm, um zum Menü zurückzukehren." },
+            it: { title: "Messaggio Gigante", label: "Scrivi il tuo messaggio:", speed: "Velocità:", slow: "Lento", medium: "Medio", fast: "Veloce", btn: "Lancia Messaggio", hint: "💡 Tocca due volte lo schermo per tornare al menu." },
+            nl: { title: "Groot Bericht", label: "Typ je bericht:", speed: "Snelheid:", slow: "Langzaam", medium: "Gemiddeld", fast: "Snel", btn: "Bericht Starten", hint: "💡 Dubbel tik op het scherm om terug te keren naar het menu." },
+            pt: { title: "Mensagem Gigante", label: "Escreva sua mensagem:", speed: "Velocidade:", slow: "Lento", medium: "Médio", fast: "Rápido", btn: "Lançar Mensagem", hint: "💡 Dê um toque duplo na tela para voltar ao menu." }
         };
 
         function changeLanguage() {
@@ -237,6 +238,13 @@
             const t = translations[lang] || translations['en'];
             document.getElementById('ui-title').innerText = t.title;
             document.getElementById('ui-label').innerText = t.label;
+            document.getElementById('ui-speed-label').innerText = t.speed;
+            
+            const speedSelect = document.getElementById('speed-select');
+            speedSelect.options[0].text = t.slow;
+            speedSelect.options[1].text = t.medium;
+            speedSelect.options[2].text = t.fast;
+
             document.getElementById('ui-btn').innerText = t.btn;
             document.getElementById('ui-instructions').innerText = t.hint;
         }
@@ -245,26 +253,29 @@
 
         function launchMarquee() {
             const text = document.getElementById('msg-input').value.trim() || "Missatge buit";
-            const emojis = ["🚀", "🔥", "✨", "⭐", "🎯", "💡", "💎", "🌟", "⚡", "🎉"];
+            const speed = document.getElementById('speed-select').value;
             
-            // Seleccionar 3 emoticons aleatoris
+            const emojis = ["🚀", "🔥", "✨", "⭐", "🎯", "💡", "💎", "🌟", "⚡", "🎉"];
             let chosenEmojis = "";
             for(let i=0; i<3; i++) {
                 chosenEmojis += emojis[Math.floor(Math.random() * emojis.length)];
             }
 
-            const fullText = `${chosenEmojis}  ${text}  `;
+            // Un únic missatge amb 3 emoticons al davant
+            const fullText = `${chosenEmojis} ${text}     `;
+            const elem = document.getElementById('m-text');
+            elem.innerText = fullText;
 
-            // Assignar a les diferents pistes per omplir verticalment la pantalla
-            document.getElementById('m1').innerText = fullText.repeat(4);
-            document.getElementById('m2').innerText = fullText.repeat(4);
-            document.getElementById('m3').innerText = fullText.repeat(4);
-            document.getElementById('m4').innerText = fullText.repeat(4);
+            // Definir durada segons la velocitat triada
+            let duration = 12; // mitjà per defecte
+            if (speed === 'slow') duration = 22;
+            if (speed === 'fast') duration = 6;
+            
+            elem.style.animationDuration = duration + 's';
 
             const screen = document.getElementById('marquee-screen');
             screen.style.display = 'flex';
 
-            // Intentar posar pantalla completa real a l'iPhone si ho permet el navegador
             if (screen.requestFullscreen) {
                 screen.requestFullscreen().catch(() => {});
             } else if (screen.webkitRequestFullscreen) {
@@ -272,13 +283,11 @@
             }
         }
 
-        // Detectar doble toc (two taps) per sortir
         function handleScreenTap(e) {
             const currentTime = new Date().getTime();
             const tapLength = currentTime - lastTap;
             
             if (tapLength < 300 && tapLength > 0) {
-                // Doble toc detectat
                 exitMarquee();
             }
             lastTap = currentTime;
