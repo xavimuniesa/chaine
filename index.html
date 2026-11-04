@@ -163,6 +163,12 @@
             text-shadow: none;
         }
 
+        /* El "* { font-family }" global s'aplicaria directament als <span> del text; cal que hereten la lletra de la cinta */
+        .marquee-text span {
+            font-family: inherit;
+            font-weight: inherit;
+        }
+
         .run-h { animation: mq-h var(--dur, 10s) linear infinite; }
         .run-v { animation: mq-v var(--dur, 10s) linear infinite; }
 
