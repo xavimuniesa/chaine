@@ -172,7 +172,7 @@
         /* Missatge d'informació (lloc, temperatura, data, hora) */
         .marquee-text .isg { display: inline-block; }
         .marquee-text .isg + .isg { margin-left: .55em; }
-        .marquee-text .sep { padding: 0 .1em; }
+        .marquee-text .sep { padding: 0 .4em; }
 
         .run-h { animation: mq-h var(--dur, 10s) linear infinite; }
         .run-v { animation: mq-v var(--dur, 10s) linear infinite; }
@@ -978,7 +978,7 @@
         function infoSegments() {
             const i = state.info, now = new Date(), segs = [];
             if (i.place) segs.push({ k: 'place', ico: '📍', txt: i.place });
-            if (typeof i.temp === 'number') segs.push({ k: 'temp', ico: wxEmoji(i.code, i.day !== 0), txt: Math.round(i.temp) + ' °C' });
+            if (typeof i.temp === 'number') segs.push({ k: 'temp', ico: wxEmoji(i.code, i.day !== 0), txt: Math.round(i.temp) + '°C' });
             segs.push({ k: 'date', ico: '📅', txt: fmtDate(now) });
             segs.push({ k: 'time', ico: CLOCKS[now.getHours() % 12], txt: fmtTime(now) });
             return segs;
