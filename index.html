@@ -972,7 +972,7 @@
             if (code >= 95) return '⛈️';
             return '🌡️';
         }
-        const fmtDate = d => { try { return new Intl.DateTimeFormat(state.lang, { weekday: 'short', day: 'numeric', month: 'short' }).format(d); } catch (e) { return d.toLocaleDateString(); } };
+        const fmtDate = d => { try { return new Intl.DateTimeFormat(state.lang, { weekday: 'short', day: 'numeric', month: 'short' }).format(d).replace(/,/g, '').replace(/\.$/, ''); } catch (e) { return d.toLocaleDateString(); } };
         const fmtTime = d => { try { return new Intl.DateTimeFormat(state.lang, { hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(d); } catch (e) { return d.toTimeString().slice(0, 5); } };
 
         function infoSegments() {
