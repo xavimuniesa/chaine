@@ -138,6 +138,11 @@
         .f-condensed  { --u-font: "Bebas Neue", Impact, "Arial Narrow", sans-serif; --u-weight: 400; --u-style: normal; --u-spacing: .03em; }
         .f-typewriter { --u-font: "Special Elite", "Courier New", monospace; --u-weight: 400; --u-style: normal; --u-spacing: .02em; }
 
+        /* Majúscules / minúscules (tria de l'usuari) */
+        .case-upper { --c-case: uppercase; }
+        .case-as    { --c-case: none; }
+        .case-lower { --c-case: lowercase; }
+
         /* Text en moviment (compartit per vista prèvia i pantalla completa) */
         .marquee-text {
             position: absolute;
@@ -148,7 +153,7 @@
             white-space: nowrap;
             line-height: 1;
             padding: .25em .5em;
-            text-transform: var(--u-case, uppercase);
+            text-transform: var(--c-case, var(--u-case, uppercase));
             font-family: var(--u-font, var(--t-font));
             font-weight: var(--u-weight, var(--t-weight));
             font-style: var(--u-style, var(--t-style));
@@ -581,6 +586,15 @@
             <div class="fonts-grid" id="fonts-grid" role="radiogroup" aria-labelledby="ui-font-label"></div>
         </div>
 
+        <div class="field" style="margin-top:16px;margin-bottom:0;">
+            <span class="lbl" id="ui-case-label" data-i18n="caps">Majúscules i minúscules:</span>
+            <div class="seg" id="case-seg" role="radiogroup" aria-labelledby="ui-case-label">
+                <button type="button" role="radio" aria-checked="false" data-value="upper">ABC</button>
+                <button type="button" role="radio" aria-checked="true" data-value="as">Abc</button>
+                <button type="button" role="radio" aria-checked="false" data-value="lower">abc</button>
+            </div>
+        </div>
+
         <button type="button" class="btn-launch" id="ui-btn" data-i18n="btn">Llançar Missatge</button>
 
         <p class="instructions" id="ui-instructions" data-i18n="hint">💡 Fes doble toc a la pantalla per tornar al menú.</p>
@@ -598,14 +612,14 @@
 
         /* ======================= TRADUCCIONS DE LA INTERFÍCIE ======================= */
         const UI = {
-            ca: { title: "Missatge Intel·ligent", label: "Escriu el teu missatge:", speed: "Velocitat:", orient: "Orientació:", style: "Estil de cinta:", slow: "Lent", medium: "Mitjà", fast: "Ràpid", auto: "Auto", landscape: "Horitzontal", portrait: "Vertical", btn: "Llançar Missatge", btnLoading: "Traduint…", hint: "💡 Fes doble toc a la pantalla per tornar al menú.", preview: "Vista prèvia", exit: "Doble toc per sortir", noTr: "Sense traducció: es mostra el text original", empty: "Missatge buit", hello: "Hola", emoji: "Afegeix emojis al missatge", font: "Tipus de lletra:", fontAuto: "Segons l'estil", info: "Lloc, temperatura, data i hora", infoBusy: "Cercant ubicació…", infoNoLoc: "No he pogut obtenir la ubicació: només data i hora", infoNoWx: "No s'ha pogut obtenir la temperatura" },
-            es: { title: "Mensaje Inteligente", label: "Escribe tu mensaje:", speed: "Velocidad:", orient: "Orientación:", style: "Estilo de cinta:", slow: "Lento", medium: "Medio", fast: "Rápido", auto: "Auto", landscape: "Horizontal", portrait: "Vertical", btn: "Lanzar Mensaje", btnLoading: "Traduciendo…", hint: "💡 Haz doble toque en la pantalla para volver al menú.", preview: "Vista previa", exit: "Doble toque para salir", noTr: "Sin traducción: se muestra el texto original", empty: "Mensaje vacío", hello: "Hola", emoji: "Añadir emojis al mensaje", font: "Tipo de letra:", fontAuto: "Según el estilo", info: "Lugar, temperatura, fecha y hora", infoBusy: "Buscando ubicación…", infoNoLoc: "No se pudo obtener la ubicación: solo fecha y hora", infoNoWx: "No se pudo obtener la temperatura" },
-            fr: { title: "Message Intelligent", label: "Écrivez votre message:", speed: "Vitesse:", orient: "Orientation:", style: "Style de bandeau:", slow: "Lent", medium: "Moyen", fast: "Rapide", auto: "Auto", landscape: "Horizontal", portrait: "Vertical", btn: "Lancer le message", btnLoading: "Traduction…", hint: "💡 Appuyez deux fois sur l'écran pour revenir au menu.", preview: "Aperçu", exit: "Double appui pour quitter", noTr: "Pas de traduction : texte original affiché", empty: "Message vide", hello: "Bonjour", emoji: "Ajouter des emojis au message", font: "Police:", fontAuto: "Selon le style", info: "Lieu, température, date et heure", infoBusy: "Localisation…", infoNoLoc: "Position introuvable : date et heure seulement", infoNoWx: "Température indisponible" },
-            en: { title: "Smart Message", label: "Type your message:", speed: "Speed:", orient: "Orientation:", style: "Banner style:", slow: "Slow", medium: "Medium", fast: "Fast", auto: "Auto", landscape: "Landscape", portrait: "Portrait", btn: "Launch Message", btnLoading: "Translating…", hint: "💡 Double tap on the screen to return to the menu.", preview: "Preview", exit: "Double tap to exit", noTr: "Not translated: showing the original text", empty: "Empty message", hello: "Hello", emoji: "Add emojis to the message", font: "Font:", fontAuto: "Match style", info: "Place, temperature, date and time", infoBusy: "Finding location…", infoNoLoc: "Location unavailable: showing date and time only", infoNoWx: "Temperature unavailable" },
-            de: { title: "Intelligente Nachricht", label: "Schreibe deine Nachricht:", speed: "Geschwindigkeit:", orient: "Ausrichtung:", style: "Banner-Stil:", slow: "Langsam", medium: "Mittel", fast: "Schnell", auto: "Auto", landscape: "Querformat", portrait: "Hochformat", btn: "Nachricht starten", btnLoading: "Übersetzen…", hint: "💡 Doppeltippen auf den Bildschirm, um zum Menü zurückzukehren.", preview: "Vorschau", exit: "Doppeltippen zum Beenden", noTr: "Nicht übersetzt: Originaltext wird angezeigt", empty: "Leere Nachricht", hello: "Hallo", emoji: "Emojis zur Nachricht hinzufügen", font: "Schriftart:", fontAuto: "Je nach Stil", info: "Ort, Temperatur, Datum und Uhrzeit", infoBusy: "Standort wird gesucht…", infoNoLoc: "Standort nicht verfügbar: nur Datum und Uhrzeit", infoNoWx: "Temperatur nicht verfügbar" },
-            it: { title: "Messaggio Intelligente", label: "Scrivi il tuo messaggio:", speed: "Velocità:", orient: "Orientamento:", style: "Stile striscione:", slow: "Lento", medium: "Medio", fast: "Veloce", auto: "Auto", landscape: "Orizzontale", portrait: "Verticale", btn: "Lancia Messaggio", btnLoading: "Traduzione…", hint: "💡 Tocca due volte lo schermo per tornare al menu.", preview: "Anteprima", exit: "Tocca due volte per uscire", noTr: "Non tradotto: viene mostrato il testo originale", empty: "Messaggio vuoto", hello: "Ciao", emoji: "Aggiungi emoji al messaggio", font: "Carattere:", fontAuto: "Secondo lo stile", info: "Luogo, temperatura, data e ora", infoBusy: "Ricerca posizione…", infoNoLoc: "Posizione non disponibile: solo data e ora", infoNoWx: "Temperatura non disponibile" },
-            nl: { title: "Slim Bericht", label: "Typ je bericht:", speed: "Snelheid:", orient: "Oriëntatie:", style: "Stijl van de band:", slow: "Langzaam", medium: "Gemiddeld", fast: "Snel", auto: "Auto", landscape: "Liggend", portrait: "Staand", btn: "Bericht Starten", btnLoading: "Vertalen…", hint: "💡 Dubbel tik op het scherm om terug te keren naar het menu.", preview: "Voorbeeld", exit: "Dubbel tikken om te sluiten", noTr: "Niet vertaald: originele tekst getoond", empty: "Leeg bericht", hello: "Hallo", emoji: "Emoji's aan het bericht toevoegen", font: "Lettertype:", fontAuto: "Volgens stijl", info: "Plaats, temperatuur, datum en tijd", infoBusy: "Locatie zoeken…", infoNoLoc: "Locatie niet beschikbaar: alleen datum en tijd", infoNoWx: "Temperatuur niet beschikbaar" },
-            pt: { title: "Mensagem Inteligente", label: "Escreva sua mensagem:", speed: "Velocidade:", orient: "Orientação:", style: "Estilo da faixa:", slow: "Lento", medium: "Médio", fast: "Rápido", auto: "Auto", landscape: "Horizontal", portrait: "Vertical", btn: "Lançar Mensagem", btnLoading: "Traduzindo…", hint: "💡 Dê um toque duplo na tela para voltar ao menu.", preview: "Pré-visualização", exit: "Toque duplo para sair", noTr: "Sem tradução: exibindo o texto original", empty: "Mensagem vazia", hello: "Olá", emoji: "Adicionar emojis à mensagem", font: "Fonte:", fontAuto: "Conforme o estilo", info: "Local, temperatura, data e hora", infoBusy: "A procurar localização…", infoNoLoc: "Localização indisponível: apenas data e hora", infoNoWx: "Temperatura indisponível" }
+            ca: { title: "Missatge Intel·ligent", label: "Escriu el teu missatge:", speed: "Velocitat:", orient: "Orientació:", style: "Estil de cinta:", slow: "Lent", medium: "Mitjà", fast: "Ràpid", auto: "Auto", landscape: "Horitzontal", portrait: "Vertical", btn: "Llançar Missatge", btnLoading: "Traduint…", hint: "💡 Fes doble toc a la pantalla per tornar al menú.", preview: "Vista prèvia", exit: "Doble toc per sortir", noTr: "Sense traducció: es mostra el text original", empty: "Missatge buit", hello: "Hola", caps: "Majúscules i minúscules:", emoji: "Afegeix emojis al missatge", font: "Tipus de lletra:", fontAuto: "Segons l'estil", info: "Lloc, temperatura, data i hora", infoBusy: "Cercant ubicació…", infoNoLoc: "No he pogut obtenir la ubicació: només data i hora", infoNoWx: "No s'ha pogut obtenir la temperatura" },
+            es: { title: "Mensaje Inteligente", label: "Escribe tu mensaje:", speed: "Velocidad:", orient: "Orientación:", style: "Estilo de cinta:", slow: "Lento", medium: "Medio", fast: "Rápido", auto: "Auto", landscape: "Horizontal", portrait: "Vertical", btn: "Lanzar Mensaje", btnLoading: "Traduciendo…", hint: "💡 Haz doble toque en la pantalla para volver al menú.", preview: "Vista previa", exit: "Doble toque para salir", noTr: "Sin traducción: se muestra el texto original", empty: "Mensaje vacío", hello: "Hola", caps: "Mayúsculas y minúsculas:", emoji: "Añadir emojis al mensaje", font: "Tipo de letra:", fontAuto: "Según el estilo", info: "Lugar, temperatura, fecha y hora", infoBusy: "Buscando ubicación…", infoNoLoc: "No se pudo obtener la ubicación: solo fecha y hora", infoNoWx: "No se pudo obtener la temperatura" },
+            fr: { title: "Message Intelligent", label: "Écrivez votre message:", speed: "Vitesse:", orient: "Orientation:", style: "Style de bandeau:", slow: "Lent", medium: "Moyen", fast: "Rapide", auto: "Auto", landscape: "Horizontal", portrait: "Vertical", btn: "Lancer le message", btnLoading: "Traduction…", hint: "💡 Appuyez deux fois sur l'écran pour revenir au menu.", preview: "Aperçu", exit: "Double appui pour quitter", noTr: "Pas de traduction : texte original affiché", empty: "Message vide", hello: "Bonjour", caps: "Majuscules et minuscules:", emoji: "Ajouter des emojis au message", font: "Police:", fontAuto: "Selon le style", info: "Lieu, température, date et heure", infoBusy: "Localisation…", infoNoLoc: "Position introuvable : date et heure seulement", infoNoWx: "Température indisponible" },
+            en: { title: "Smart Message", label: "Type your message:", speed: "Speed:", orient: "Orientation:", style: "Banner style:", slow: "Slow", medium: "Medium", fast: "Fast", auto: "Auto", landscape: "Landscape", portrait: "Portrait", btn: "Launch Message", btnLoading: "Translating…", hint: "💡 Double tap on the screen to return to the menu.", preview: "Preview", exit: "Double tap to exit", noTr: "Not translated: showing the original text", empty: "Empty message", hello: "Hello", caps: "Upper and lower case:", emoji: "Add emojis to the message", font: "Font:", fontAuto: "Match style", info: "Place, temperature, date and time", infoBusy: "Finding location…", infoNoLoc: "Location unavailable: showing date and time only", infoNoWx: "Temperature unavailable" },
+            de: { title: "Intelligente Nachricht", label: "Schreibe deine Nachricht:", speed: "Geschwindigkeit:", orient: "Ausrichtung:", style: "Banner-Stil:", slow: "Langsam", medium: "Mittel", fast: "Schnell", auto: "Auto", landscape: "Querformat", portrait: "Hochformat", btn: "Nachricht starten", btnLoading: "Übersetzen…", hint: "💡 Doppeltippen auf den Bildschirm, um zum Menü zurückzukehren.", preview: "Vorschau", exit: "Doppeltippen zum Beenden", noTr: "Nicht übersetzt: Originaltext wird angezeigt", empty: "Leere Nachricht", hello: "Hallo", caps: "Groß- und Kleinbuchstaben:", emoji: "Emojis zur Nachricht hinzufügen", font: "Schriftart:", fontAuto: "Je nach Stil", info: "Ort, Temperatur, Datum und Uhrzeit", infoBusy: "Standort wird gesucht…", infoNoLoc: "Standort nicht verfügbar: nur Datum und Uhrzeit", infoNoWx: "Temperatur nicht verfügbar" },
+            it: { title: "Messaggio Intelligente", label: "Scrivi il tuo messaggio:", speed: "Velocità:", orient: "Orientamento:", style: "Stile striscione:", slow: "Lento", medium: "Medio", fast: "Veloce", auto: "Auto", landscape: "Orizzontale", portrait: "Verticale", btn: "Lancia Messaggio", btnLoading: "Traduzione…", hint: "💡 Tocca due volte lo schermo per tornare al menu.", preview: "Anteprima", exit: "Tocca due volte per uscire", noTr: "Non tradotto: viene mostrato il testo originale", empty: "Messaggio vuoto", hello: "Ciao", caps: "Maiuscole e minuscole:", emoji: "Aggiungi emoji al messaggio", font: "Carattere:", fontAuto: "Secondo lo stile", info: "Luogo, temperatura, data e ora", infoBusy: "Ricerca posizione…", infoNoLoc: "Posizione non disponibile: solo data e ora", infoNoWx: "Temperatura non disponibile" },
+            nl: { title: "Slim Bericht", label: "Typ je bericht:", speed: "Snelheid:", orient: "Oriëntatie:", style: "Stijl van de band:", slow: "Langzaam", medium: "Gemiddeld", fast: "Snel", auto: "Auto", landscape: "Liggend", portrait: "Staand", btn: "Bericht Starten", btnLoading: "Vertalen…", hint: "💡 Dubbel tik op het scherm om terug te keren naar het menu.", preview: "Voorbeeld", exit: "Dubbel tikken om te sluiten", noTr: "Niet vertaald: originele tekst getoond", empty: "Leeg bericht", hello: "Hallo", caps: "Hoofdletters en kleine letters:", emoji: "Emoji's aan het bericht toevoegen", font: "Lettertype:", fontAuto: "Volgens stijl", info: "Plaats, temperatuur, datum en tijd", infoBusy: "Locatie zoeken…", infoNoLoc: "Locatie niet beschikbaar: alleen datum en tijd", infoNoWx: "Temperatuur niet beschikbaar" },
+            pt: { title: "Mensagem Inteligente", label: "Escreva sua mensagem:", speed: "Velocidade:", orient: "Orientação:", style: "Estilo da faixa:", slow: "Lento", medium: "Médio", fast: "Rápido", auto: "Auto", landscape: "Horizontal", portrait: "Vertical", btn: "Lançar Mensagem", btnLoading: "Traduzindo…", hint: "💡 Dê um toque duplo na tela para voltar ao menu.", preview: "Pré-visualização", exit: "Toque duplo para sair", noTr: "Sem tradução: exibindo o texto original", empty: "Mensagem vazia", hello: "Olá", caps: "Maiúsculas e minúsculas:", emoji: "Adicionar emojis à mensagem", font: "Fonte:", fontAuto: "Conforme o estilo", info: "Local, temperatura, data e hora", infoBusy: "A procurar localização…", infoNoLoc: "Localização indisponível: apenas data e hora", infoNoWx: "Temperatura indisponível" }
         };
 
         const THEMES = [
@@ -909,7 +923,7 @@
         const infoNote = $('info-note');
 
         const STORE_KEY = 'mq-intelligent-v2';
-        const state = { lang: 'ca', style: 'neon', speed: 'medium', orient: 'auto', emoji: true, font: 'auto', info: null, active: false };
+        const state = { lang: 'ca', style: 'neon', speed: 'medium', orient: 'auto', emoji: true, font: 'auto', caps: 'as', info: null, active: false };
         let launching = false, fsEntered = false, wakeLock = null, toastTimer = null, lastTap = 0;
 
         const T = () => UI[state.lang] || UI.en;
@@ -927,6 +941,7 @@
                 if (ORIENTS.includes(s.orient)) state.orient = s.orient;
                 if (typeof s.emoji === 'boolean') state.emoji = s.emoji;
                 if (FONTS.some(f => f.id === s.font)) state.font = s.font;
+                if (['upper', 'as', 'lower'].includes(s.caps)) state.caps = s.caps;
                 if (typeof s.msg === 'string' && s.msg.trim()) input.value = s.msg;
                 // Missatge d'informació (lloc, temperatura, data i hora): es recupera viu. Abans, en tornar a obrir
                 // l'app, quedava com un text fix amb l'hora i la temperatura del dia que s'havia creat.
@@ -940,7 +955,7 @@
         function saveState() {
             try {
                 localStorage.setItem(STORE_KEY, JSON.stringify({
-                    lang: state.lang, style: state.style, speed: state.speed, orient: state.orient, emoji: state.emoji, font: state.font, msg: input.value,
+                    lang: state.lang, style: state.style, speed: state.speed, orient: state.orient, emoji: state.emoji, font: state.font, caps: state.caps, msg: input.value,
                     info: state.info ? { place: state.info.place, lat: state.info.lat, lon: state.info.lon } : null
                 }));
             } catch (e) { /* sense emmagatzematge */ }
@@ -948,7 +963,7 @@
         const debounce = (fn, ms) => { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); }; };
 
         // Classe CSS del tipus de lletra triat ('' = el del tema)
-        const fontClass = () => state.font === 'auto' ? '' : ' f-' + state.font;
+        const fontClass = () => (state.font === 'auto' ? '' : ' f-' + state.font) + ' case-' + state.caps;
         const isLcd = () => state.font === 'lcd' || (state.font === 'auto' && state.style === 'quars');
         // La tipografia LCD no té accents ni alguns signes: els simplifiquem perquè mai surti un buit
         function forDisplay(txt) {
@@ -1384,6 +1399,7 @@
         syncEmoji();
         bindSeg('speed-seg', 'speed');
         bindSeg('orient-seg', 'orient');
+        bindSeg('case-seg', 'caps');
         applyLanguage();
         if (!state.info && isGreeting(input.value)) input.value = T().hello;
         if (state.info) {
